@@ -3,6 +3,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 const FRAME_COUNT = 75
+const BLAST_AT    = 0.47  // scroll progress (0→1) when cup explodes — adjust to match visual
 
 function framePath(n: number) {
   return `/frames/ezgif-frame-${String(n).padStart(3, '0')}.jpg`
@@ -30,12 +31,81 @@ function drawImageCover(
   ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch)
 }
 
+// --- Web Audio noise buffer generators ---
+
+function makeBrownNoise(actx: AudioContext, seconds = 2): AudioBuffer {
+  const sr  = actx.sampleRate
+  const buf = actx.createBuffer(1, sr * seconds, sr)
+  const d   = buf.getChannelData(0)
+  let last  = 0
+  for (let i = 0; i < d.length; i++) {
+    const w = Math.random() * 2 - 1
+    d[i]  = (last + 0.02 * w) / 1.02
+    last  = d[i]
+    d[i] *= 3.5
+  }
+  return buf
+}
+
+function makeWhiteNoise(actx: AudioContext, seconds = 2): AudioBuffer {
+  const sr  = actx.sampleRate
+  const buf = actx.createBuffer(1, sr * seconds, sr)
+  const d   = buf.getChannelData(0)
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1
+  return buf
+}
+
+// One-shot blast — deep thump + sharp crack, nodes self-dispose after playback
+function playBlast(actx: AudioContext) {
+  const t = actx.currentTime
+
+  // Layer 1 — deep thump (sine oscillator, fast pitch drop + decay)
+  const osc     = actx.createOscillator()
+  const oscGain = actx.createGain()
+  osc.type = 'sine'
+  osc.frequency.setValueAtTime(90, t)
+  osc.frequency.exponentialRampToValueAtTime(28, t + 0.18)
+  oscGain.gain.setValueAtTime(1.0, t)
+  oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.45)
+  osc.connect(oscGain)
+  oscGain.connect(actx.destination)
+  osc.start(t)
+  osc.stop(t + 0.45)
+
+  // Layer 2 — sharp crack (white noise burst through bandpass)
+  const noiseSrc  = actx.createBufferSource()
+  noiseSrc.buffer = makeWhiteNoise(actx, 0.3)
+  const bpf       = actx.createBiquadFilter()
+  bpf.type             = 'bandpass'
+  bpf.frequency.value  = 1200
+  bpf.Q.value          = 0.8
+  const noiseGain = actx.createGain()
+  noiseGain.gain.setValueAtTime(0.6, t)
+  noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.28)
+  noiseSrc.connect(bpf)
+  bpf.connect(noiseGain)
+  noiseGain.connect(actx.destination)
+  noiseSrc.start(t)
+  noiseSrc.stop(t + 0.3)
+}
+
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
   const canvasRef  = useRef<HTMLCanvasElement>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
   const imagesRef  = useRef<HTMLImageElement[]>([])
   const frameObj   = useRef({ frame: 0 })
+
+  // Audio refs
+  const audioCtxRef  = useRef<AudioContext | null>(null)
+  const rollGainRef  = useRef<GainNode | null>(null)
+  const steamGainRef = useRef<GainNode | null>(null)
+  const bpfRef       = useRef<BiquadFilterNode | null>(null)
+  const hpfRef       = useRef<BiquadFilterNode | null>(null)
+  const scrollingRef  = useRef(false)
+  const fadeTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const lastFrameRef  = useRef(0)
+  const blastFiredRef = useRef(false)
 
   // Preload all frames
   useEffect(() => {
@@ -77,6 +147,58 @@ export default function Hero() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  // Web Audio setup — lazy-init on first scroll (browser autoplay policy)
+  useEffect(() => {
+    const initAudio = () => {
+      if (audioCtxRef.current) return
+      const actx = new AudioContext()
+      audioCtxRef.current = actx
+
+      const master = actx.createGain()
+      master.gain.value = 0.7
+      master.connect(actx.destination)
+
+      // Cup roll — brown noise through bandpass filter
+      const rollSrc = actx.createBufferSource()
+      rollSrc.buffer = makeBrownNoise(actx)
+      rollSrc.loop   = true
+      const bpf = actx.createBiquadFilter()
+      bpf.type           = 'bandpass'
+      bpf.frequency.value = 120
+      bpf.Q.value         = 1.5
+      const rollGain = actx.createGain()
+      rollGain.gain.value = 0
+      rollSrc.connect(bpf)
+      bpf.connect(rollGain)
+      rollGain.connect(master)
+      rollSrc.start()
+      bpfRef.current      = bpf
+      rollGainRef.current = rollGain
+
+      // Steam blow — white noise through highpass filter
+      const steamSrc = actx.createBufferSource()
+      steamSrc.buffer = makeWhiteNoise(actx)
+      steamSrc.loop   = true
+      const hpf = actx.createBiquadFilter()
+      hpf.type            = 'highpass'
+      hpf.frequency.value  = 800
+      const steamGain = actx.createGain()
+      steamGain.gain.value = 0
+      steamSrc.connect(hpf)
+      hpf.connect(steamGain)
+      steamGain.connect(master)
+      steamSrc.start()
+      hpfRef.current       = hpf
+      steamGainRef.current = steamGain
+    }
+
+    window.addEventListener('scroll', initAudio, { once: true })
+    return () => {
+      window.removeEventListener('scroll', initAudio)
+      audioCtxRef.current?.close()
+    }
+  }, [])
+
   // GSAP ScrollTrigger setup
   useEffect(() => {
     const canvas  = canvasRef.current
@@ -87,6 +209,54 @@ export default function Hero() {
     canvas.width  = canvas.offsetWidth
     canvas.height = canvas.offsetHeight
 
+    // Drives both audio parameters based on scroll progress (0→1)
+    const updateAudio = (progress: number) => {
+      const actx      = audioCtxRef.current
+      const rollGain  = rollGainRef.current
+      const steamGain = steamGainRef.current
+      const bpf       = bpfRef.current
+      const hpf       = hpfRef.current
+      if (!actx || !rollGain || !steamGain || !bpf || !hpf) return
+      if (actx.state === 'suspended') actx.resume()
+
+      // Detect scrolling by watching frame movement
+      const currentFrame = frameObj.current.frame
+      if (Math.abs(currentFrame - lastFrameRef.current) > 0.05) {
+        scrollingRef.current = true
+        if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current)
+        fadeTimerRef.current = setTimeout(() => {
+          scrollingRef.current = false
+          rollGainRef.current?.gain.setTargetAtTime(0, actx.currentTime, 0.15)
+          steamGainRef.current?.gain.setTargetAtTime(0, actx.currentTime, 0.15)
+        }, 200)
+      }
+      lastFrameRef.current = currentFrame
+
+      if (!scrollingRef.current) return
+
+      const t = actx.currentTime
+
+      // Roll: sin arc peaks at 40% progress, gone by 75%
+      const rollVol = progress < 0.75
+        ? Math.sin((progress / 0.75) * Math.PI) * 0.35
+        : 0
+      rollGain.gain.setTargetAtTime(rollVol, t, 0.05)
+      bpf.frequency.setTargetAtTime(100 + progress * 200, t, 0.05)
+
+      // Steam: ramps in from 40% progress
+      const steamVol = Math.max(0, (progress - 0.4) / 0.6) * 0.28
+      steamGain.gain.setTargetAtTime(steamVol, t, 0.05)
+      hpf.frequency.setTargetAtTime(600 + progress * 1400, t, 0.05)
+
+      // One-shot blast at the explosion frame
+      if (progress >= BLAST_AT && !blastFiredRef.current) {
+        blastFiredRef.current = true
+        playBlast(actx)
+      } else if (progress < BLAST_AT) {
+        blastFiredRef.current = false  // re-arm for next forward pass
+      }
+    }
+
     const render = () => {
       const idx = Math.round(frameObj.current.frame)
       const img = imagesRef.current[idx]
@@ -94,6 +264,7 @@ export default function Hero() {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         drawImageCover(ctx, img, canvas.width, canvas.height)
       }
+      updateAudio(frameObj.current.frame / (FRAME_COUNT - 1))
     }
 
     // Frame scrub animation — pinned for 300vh of scroll
@@ -133,6 +304,7 @@ export default function Hero() {
       frameTween.scrollTrigger?.kill()
       frameTween.kill()
       ScrollTrigger.getAll().forEach((st) => st.kill())
+      if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current)
     }
   }, [])
 
