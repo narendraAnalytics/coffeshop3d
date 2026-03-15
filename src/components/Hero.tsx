@@ -99,9 +99,8 @@ export default function Hero() {
   // Audio refs
   const audioCtxRef  = useRef<AudioContext | null>(null)
   const rollGainRef  = useRef<GainNode | null>(null)
-  const steamGainRef = useRef<GainNode | null>(null)
+  const musicGainRef = useRef<GainNode | null>(null)
   const bpfRef       = useRef<BiquadFilterNode | null>(null)
-  const hpfRef       = useRef<BiquadFilterNode | null>(null)
   const scrollingRef  = useRef(false)
   const fadeTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastFrameRef  = useRef(0)
@@ -175,21 +174,25 @@ export default function Hero() {
       bpfRef.current      = bpf
       rollGainRef.current = rollGain
 
-      // Steam blow — white noise through highpass filter
-      const steamSrc = actx.createBufferSource()
-      steamSrc.buffer = makeWhiteNoise(actx)
-      steamSrc.loop   = true
-      const hpf = actx.createBiquadFilter()
-      hpf.type            = 'highpass'
-      hpf.frequency.value  = 800
-      const steamGain = actx.createGain()
-      steamGain.gain.value = 0
-      steamSrc.connect(hpf)
-      hpf.connect(steamGain)
-      steamGain.connect(master)
-      steamSrc.start()
-      hpfRef.current       = hpf
-      steamGainRef.current = steamGain
+      // Pleasant music — Cmaj7 chord pad (4 triangle oscillators)
+      const musicGain = actx.createGain()
+      musicGain.gain.value = 0
+      const notes = [
+        { freq: 261.63, detune: -4 },
+        { freq: 329.63, detune: -1 },
+        { freq: 392.00, detune:  1 },
+        { freq: 493.88, detune:  4 },
+      ]
+      notes.forEach(({ freq, detune }) => {
+        const osc = actx.createOscillator()
+        osc.type            = 'triangle'
+        osc.frequency.value = freq
+        osc.detune.value    = detune
+        osc.connect(musicGain)
+        osc.start()
+      })
+      musicGain.connect(master)
+      musicGainRef.current = musicGain
     }
 
     window.addEventListener('scroll', initAudio, { once: true })
@@ -213,10 +216,9 @@ export default function Hero() {
     const updateAudio = (progress: number) => {
       const actx      = audioCtxRef.current
       const rollGain  = rollGainRef.current
-      const steamGain = steamGainRef.current
+      const musicGain = musicGainRef.current
       const bpf       = bpfRef.current
-      const hpf       = hpfRef.current
-      if (!actx || !rollGain || !steamGain || !bpf || !hpf) return
+      if (!actx || !rollGain || !musicGain || !bpf) return
       if (actx.state === 'suspended') actx.resume()
 
       // Detect scrolling by watching frame movement
@@ -227,7 +229,7 @@ export default function Hero() {
         fadeTimerRef.current = setTimeout(() => {
           scrollingRef.current = false
           rollGainRef.current?.gain.setTargetAtTime(0, actx.currentTime, 0.15)
-          steamGainRef.current?.gain.setTargetAtTime(0, actx.currentTime, 0.15)
+          musicGainRef.current?.gain.setTargetAtTime(0, actx.currentTime, 0.15)
         }, 200)
       }
       lastFrameRef.current = currentFrame
@@ -243,10 +245,9 @@ export default function Hero() {
       rollGain.gain.setTargetAtTime(rollVol, t, 0.05)
       bpf.frequency.setTargetAtTime(100 + progress * 200, t, 0.05)
 
-      // Steam: ramps in from 40% progress
-      const steamVol = Math.max(0, (progress - 0.4) / 0.6) * 0.28
-      steamGain.gain.setTargetAtTime(steamVol, t, 0.05)
-      hpf.frequency.setTargetAtTime(600 + progress * 1400, t, 0.05)
+      // Music: Cmaj7 chord pad swells in from 40% progress
+      const musicVol = Math.max(0, (progress - 0.4) / 0.6) * 0.22
+      musicGain.gain.setTargetAtTime(musicVol, t, 0.08)
 
       // One-shot blast at the explosion frame
       if (progress >= BLAST_AT && !blastFiredRef.current) {
