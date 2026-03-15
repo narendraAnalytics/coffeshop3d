@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme {
+  --color-espresso:   #1a0f0a;
+  --color-cream:      #f5e6d3;
+  --color-beige:      #e8d5b7;
+  --color-terracotta: #c4622d;
+  --color-gold:       #c49a3c;
+  --color-dark-warm:  #2d1a10;
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    system-ui, 'Segoe UI', sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: #1a0f0a;
+  color: #f5e6d3;
+  font-family: var(--font-body, system-ui, sans-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Navbar scroll state — transparent by design, logo animation handles state */
+.nav-scrolled {}

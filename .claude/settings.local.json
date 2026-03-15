@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(unzip:*)",
+      "WebFetch(domain:slamdunk-five.vercel.app)",
+      "Bash(dir:*)",
+      "Bash(cmd /c \"dir C:\\\\Users\\\\ES\\\\Desktop\\\\2025\\\\coffeshop3d\\\\assets 2>&1\")",
+      "Bash(node -e:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(npm run build:*)",
+      "Bash(ls -la \"C:\\\\Users\\\\ES\\\\Desktop\\\\2025\\\\coffeshop3d\\\\images\"\" 2>/dev/null || ls -la \"C:UsersESDesktop2025coffeshop3dpublicimages\"\")"
+    ]
+  }
+}

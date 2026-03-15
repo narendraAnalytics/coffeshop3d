@@ -1,0 +1,63 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 2.5rem;
+}
+
+.navbar-logo-wrapper {
+  position: relative;
+  display: block;
+  flex-shrink: 0;
+  text-decoration: none;
+  will-change: transform;
+}
+
+.navbar-text-logo {
+  display: inline-block;
+  color: #f5e6d3;
+  font-family: 'Raleway', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.navbar-text-logo-dot {
+  color: #c49a3c;
+  letter-spacing: 0;
+}
+
+.navbar-img-logo {
+  height: 2.5rem;
+  width: auto;
+  display: none;
+  vertical-align: middle;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-link {
+  color: #e8d5b7;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+
+.navbar-link:hover {
+  color: #c49a3c;
+}

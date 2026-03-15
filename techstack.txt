@@ -1,0 +1,25 @@
+To create a high-end 3D website like the one shown in the video, you would need a specific stack of modern web technologies and AI tools. Here is the breakdown:
+
+### **Core Tech Stack**
+
+* **[React 19](https://www.youtube.com/watch?v=uqpXAfNEY4g)**: Used as the primary frontend framework for building the user interface [02:41](http://www.youtube.com/watch?v=uqpXAfNEY4g&t=161).
+* **[Three.js](https://www.youtube.com/watch?v=uqpXAfNEY4g)**: The library used to handle all 3D rendering within the browser [02:41](http://www.youtube.com/watch?v=uqpXAfNEY4g&t=161).
+* **[React Three Fiber](https://www.youtube.com/watch?v=uqpXAfNEY4g)**: A React renderer for Three.js that simplifies the integration of 3D models into a React application [02:41](http://www.youtube.com/watch?v=uqpXAfNEY4g&t=161).
+* **[GSAP (GreenSock Animation Platform)](https://www.youtube.com/watch?v=uqpXAfNEY4g)**: Used for creating complex, scroll-driven animations and smooth transitions between sections [02:41](http://www.youtube.com/watch?v=uqpXAfNEY4g&t=161).
+* **[Web Audio API](https://www.youtube.com/watch?v=uqpXAfNEY4g)**: Utilized to synthesize real-time sound effects (like a basketball "thud") directly from code without downloading external audio files [05:08](http://www.youtube.com/watch?v=uqpXAfNEY4g&t=308).
+
+### **AI Tools for Development**
+
+The "Vibe Coding" workflow relies heavily on specific AI platforms to generate code, shaders, and design systems:
+
+* **[Gemini & Google AI Studio](https://www.youtube.com/watch?v=uqpXAfNEY4g)**: The primary tools used for generating procedural textures (like the leather on the ball), writing shader math, and solving complex coordinate translations [02:41](http://www.youtube.com/watch?v=uqpXAfNEY4g&t=161).
+* **[Claude Code / Cursor](https://www.youtube.com/watch?v=uqpXAfNEY4g)**: Recommended for more backend-heavy tasks or when deep codebase integration is required [10:07](http://www.youtube.com/watch?v=uqpXAfNEY4g&t=607).
+* **[Morphen.ai (DesignToPrompt)](https://www.morphen.ai)**: A tool mentioned by the creator to convert design references (images/videos) into "Master Prompts" for AI builders [09:28](http://www.youtube.com/watch?v=uqpXAfNEY4g&t=568).
+
+### **Key Features to Implement**
+
+If you are building this yourself, you will need to focus on:
+
+1. **Procedural Textures**: Using AI to write noise-based shaders for realistic surfaces [04:04](http://www.youtube.com/watch?v=uqpXAfNEY4g&t=244).
+2. **3D-to-2D Translation**: Calculating the flight path of a 3D object to land on a 2D HTML element, like an "Add to Cart" icon [05:34](http://www.youtube.com/watch?v=uqpXAfNEY4g&t=334).
+3. **Dynamic Resolution Scaling**: Optimizing shader math to ensure high frame rates on different devices [04:47](http://www.youtube.com/watch?v=uqpXAfNEY4g&t=287).
