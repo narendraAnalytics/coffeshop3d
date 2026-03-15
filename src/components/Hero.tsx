@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 const FRAME_COUNT = 75
 const BLAST_AT    = 0.47  // scroll progress (0→1) when cup explodes — adjust to match visual
+const BEANS_AT    = 0.52  // beans scatter on table just after the blast
 
 function framePath(n: number) {
   return `/frames/ezgif-frame-${String(n).padStart(3, '0')}.jpg`
@@ -55,6 +56,32 @@ function makeWhiteNoise(actx: AudioContext, seconds = 2): AudioBuffer {
   return buf
 }
 
+// One-shot beans-on-table — 5 staggered short taps, each a single bean hitting the surface
+function playBeansFalling(actx: AudioContext) {
+  const t    = actx.currentTime
+  const taps = [0, 0.05, 0.11, 0.18, 0.27]
+  taps.forEach((offset) => {
+    const src  = actx.createBufferSource()
+    src.buffer = makeWhiteNoise(actx, 0.07)
+
+    const bpf = actx.createBiquadFilter()
+    bpf.type            = 'bandpass'
+    bpf.frequency.value = 900 + Math.random() * 500  // 900–1400 Hz per bean
+    bpf.Q.value         = 2.5
+
+    const gain = actx.createGain()
+    const vol  = 0.45 + Math.random() * 0.25          // slight volume variation
+    gain.gain.setValueAtTime(vol, t + offset)
+    gain.gain.exponentialRampToValueAtTime(0.001, t + offset + 0.055)
+
+    src.connect(bpf)
+    bpf.connect(gain)
+    gain.connect(actx.destination)
+    src.start(t + offset)
+    src.stop(t + offset + 0.07)
+  })
+}
+
 // One-shot blast — deep thump + sharp crack, nodes self-dispose after playback
 function playBlast(actx: AudioContext) {
   const t = actx.currentTime
@@ -65,7 +92,7 @@ function playBlast(actx: AudioContext) {
   osc.type = 'sine'
   osc.frequency.setValueAtTime(90, t)
   osc.frequency.exponentialRampToValueAtTime(28, t + 0.18)
-  oscGain.gain.setValueAtTime(1.0, t)
+  oscGain.gain.setValueAtTime(1.8, t)
   oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.45)
   osc.connect(oscGain)
   oscGain.connect(actx.destination)
@@ -80,7 +107,7 @@ function playBlast(actx: AudioContext) {
   bpf.frequency.value  = 1200
   bpf.Q.value          = 0.8
   const noiseGain = actx.createGain()
-  noiseGain.gain.setValueAtTime(0.6, t)
+  noiseGain.gain.setValueAtTime(1.1, t)
   noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.28)
   noiseSrc.connect(bpf)
   bpf.connect(noiseGain)
@@ -105,6 +132,7 @@ export default function Hero() {
   const fadeTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastFrameRef  = useRef(0)
   const blastFiredRef = useRef(false)
+  const beansFiredRef = useRef(false)
 
   // Preload all frames
   useEffect(() => {
@@ -255,6 +283,14 @@ export default function Hero() {
         playBlast(actx)
       } else if (progress < BLAST_AT) {
         blastFiredRef.current = false  // re-arm for next forward pass
+      }
+
+      // One-shot beans-on-table sound just after the blast
+      if (progress >= BEANS_AT && !beansFiredRef.current) {
+        beansFiredRef.current = true
+        playBeansFalling(actx)
+      } else if (progress < BEANS_AT) {
+        beansFiredRef.current = false  // re-arm for next forward pass
       }
     }
 
