@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import logoSrc from '../../images/logoimage.png'
+import coffeeIconSrc from '../../images/coffeeicon.png'
 import './Navbar.css'
 
 export default function Navbar() {
@@ -111,12 +112,15 @@ export default function Navbar() {
   return (
     <nav ref={navRef} className="navbar">
 
+      {/* Coffee icon — absolutely pinned to left, never moves */}
+      <img src={coffeeIconSrc} alt="" className="navbar-coffee-icon" />
+
       {/* Logo wrapper — translates to center on scroll */}
       <a ref={logoWrapperRef} href="#" className="navbar-logo-wrapper">
 
         {/* TEXT logo — shown at page top */}
         <span ref={textLogoRef} className="navbar-text-logo">
-          Sunrise<span className="navbar-text-logo-dot">.</span>
+          Sunrise Brew House<span className="navbar-text-logo-dot">.</span>
         </span>
 
         {/* IMAGE logo — hidden at top, appears after coin flip */}

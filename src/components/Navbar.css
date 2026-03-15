@@ -61,3 +61,21 @@
 .navbar-link:hover {
   color: #c49a3c;
 }
+
+/* Coffee icon — pinned to left, never moves with wrapper */
+.navbar-coffee-icon {
+  position: absolute;
+  left: 2.5rem;
+  top: 50%;
+  height: 1.4rem;
+  width: auto;
+  z-index: 10;
+  animation: coffeeFloat 2.8s ease-in-out infinite;
+  filter: drop-shadow(0 0 4px rgba(196, 154, 60, 0.45));
+  pointer-events: none;
+}
+
+@keyframes coffeeFloat {
+  0%, 100% { transform: translateY(-50%); }
+  50%       { transform: translateY(calc(-50% - 4px)); }
+}
