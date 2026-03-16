@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import './Hero.css'
 
 const FRAME_COUNT = 75
 const BLAST_AT    = 0.47  // scroll progress (0→1) when cup explodes — adjust to match visual
@@ -247,9 +248,9 @@ export default function Hero() {
     const setBannerOpacity = gsap.quickSetter(sideBannerRef.current, 'opacity')
 
     const updateBanner = (progress: number) => {
-      const SLIDE_IN_END  = 0.05   // fully visible   (~frame 3-4)
-      const HOLD_END      = 0.10   // starts leaving  (~frame 7)
-      const SLIDE_OUT_END = 0.15   // fully gone      (~frame 11)
+      const SLIDE_IN_END  = 0.04   // fully visible   (~frame 3)
+      const HOLD_END      = 0.15   // starts leaving  (~frame 11)
+      const SLIDE_OUT_END = 0.20   // fully gone      (~frame 15)
 
       if (progress <= SLIDE_IN_END) {
         const t = progress / SLIDE_IN_END
@@ -382,18 +383,12 @@ export default function Hero() {
     <section
       ref={sectionRef}
       id="hero"
-      style={{
-        position: 'relative',
-        width: '100%',
-        height: '100vh',
-        overflow: 'hidden',
-        background: '#1a0f0a',
-      }}
+      className="hero-section"
     >
       {/* Full-bleed canvas */}
       <canvas
         ref={canvasRef}
-        style={{ display: 'block', width: '100%', height: '100%' }}
+        className="hero-canvas"
       />
 
       {/* Sidebanner — slides in from left on scroll start */}
@@ -401,103 +396,31 @@ export default function Hero() {
         ref={sideBannerRef}
         src="/images/sidebanner.png"
         alt="side banner"
-        style={{
-          position: 'absolute',
-          left: '2%',
-          top: 'calc(50% - 35vh)',
-          zIndex: 8,
-          height: '70vh',
-          width: 'auto',
-          maxWidth: '300px',
-          objectFit: 'contain',
-          pointerEvents: 'none',
-          opacity: 0,
-        }}
+        className="hero-sidebanner"
       />
 
       {/* Overlay headline — fades in after explosion frames */}
       <div
         ref={overlayRef}
-        style={{
-          position: 'absolute',
-          bottom: '15%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          textAlign: 'center',
-          opacity: 0,
-          zIndex: 10,
-          pointerEvents: 'none',
-          width: '90%',
-          maxWidth: '700px',
-        }}
+        className="hero-overlay"
       >
-        <p
-          style={{
-            color: '#c49a3c',
-            letterSpacing: '0.25em',
-            textTransform: 'uppercase',
-            fontSize: '0.8rem',
-            marginBottom: '1rem',
-            fontWeight: 500,
-          }}
-        >
+        <p className="hero-overlay-tagline">
           Sunrise Brew House
         </p>
-        <h1
-          style={{
-            color: '#f5e6d3',
-            fontSize: 'clamp(2.5rem, 6vw, 5rem)',
-            fontFamily: "'Playfair Display', Georgia, serif",
-            fontWeight: 700,
-            lineHeight: 1.1,
-            margin: '0 0 1.5rem',
-          }}
-        >
+        <h1 className="hero-overlay-title">
           Crafted with<br />
-          <span style={{ color: '#c4622d', fontStyle: 'italic' }}>Passion.</span>
+          <span className="hero-overlay-accent">Passion.</span>
         </h1>
         <a
           href="#menu"
-          style={{
-            display: 'inline-block',
-            padding: '0.875rem 2.5rem',
-            border: '1px solid #c49a3c',
-            color: '#c49a3c',
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-            fontSize: '0.75rem',
-            textDecoration: 'none',
-            transition: 'all 0.3s ease',
-            pointerEvents: 'auto',
-          }}
-          onMouseEnter={(e) => {
-            const el = e.currentTarget as HTMLAnchorElement
-            el.style.background = '#c49a3c'
-            el.style.color = '#1a0f0a'
-          }}
-          onMouseLeave={(e) => {
-            const el = e.currentTarget as HTMLAnchorElement
-            el.style.background = 'transparent'
-            el.style.color = '#c49a3c'
-          }}
+          className="hero-menu-btn"
         >
           View Menu
         </a>
       </div>
 
       {/* Bottom gradient blend into next section */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: '200px',
-          background: 'linear-gradient(to bottom, transparent, #1a0f0a)',
-          pointerEvents: 'none',
-          zIndex: 5,
-        }}
-      />
+      <div className="hero-bottom-gradient" />
     </section>
   )
 }
