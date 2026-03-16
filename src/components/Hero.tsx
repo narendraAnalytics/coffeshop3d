@@ -133,6 +133,7 @@ export default function Hero() {
   const lastFrameRef  = useRef(0)
   const blastFiredRef = useRef(false)
   const beansFiredRef = useRef(false)
+  const sideBannerRef = useRef<HTMLImageElement>(null)
 
   // Preload all frames
   useEffect(() => {
@@ -240,6 +241,35 @@ export default function Hero() {
     canvas.width  = canvas.offsetWidth
     canvas.height = canvas.offsetHeight
 
+    // Banner: set initial off-screen state, then drive via frame progress
+    gsap.set(sideBannerRef.current, { x: '-150%', opacity: 0 })
+    const setBannerX       = gsap.quickSetter(sideBannerRef.current, 'x', '%')
+    const setBannerOpacity = gsap.quickSetter(sideBannerRef.current, 'opacity')
+
+    const updateBanner = (progress: number) => {
+      const SLIDE_IN_END  = 0.05   // fully visible   (~frame 3-4)
+      const HOLD_END      = 0.10   // starts leaving  (~frame 7)
+      const SLIDE_OUT_END = 0.15   // fully gone      (~frame 11)
+
+      if (progress <= SLIDE_IN_END) {
+        const t = progress / SLIDE_IN_END
+        const e = t * (2 - t)                  // ease-out
+        setBannerX(-150 + 150 * e)
+        setBannerOpacity(e)
+      } else if (progress <= HOLD_END) {
+        setBannerX(0)
+        setBannerOpacity(1)
+      } else if (progress <= SLIDE_OUT_END) {
+        const t = (progress - HOLD_END) / (SLIDE_OUT_END - HOLD_END)
+        const e = t * t                        // ease-in
+        setBannerX(-150 * e)
+        setBannerOpacity(1 - e)
+      } else {
+        setBannerX(-150)
+        setBannerOpacity(0)
+      }
+    }
+
     // Drives both audio parameters based on scroll progress (0→1)
     const updateAudio = (progress: number) => {
       const actx      = audioCtxRef.current
@@ -301,7 +331,9 @@ export default function Hero() {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         drawImageCover(ctx, img, canvas.width, canvas.height)
       }
-      updateAudio(frameObj.current.frame / (FRAME_COUNT - 1))
+      const progress = frameObj.current.frame / (FRAME_COUNT - 1)
+      updateAudio(progress)
+      updateBanner(progress)
     }
 
     // Frame scrub animation — pinned for 300vh of scroll
@@ -337,6 +369,7 @@ export default function Hero() {
       }
     )
 
+
     return () => {
       frameTween.scrollTrigger?.kill()
       frameTween.kill()
@@ -361,6 +394,25 @@ export default function Hero() {
       <canvas
         ref={canvasRef}
         style={{ display: 'block', width: '100%', height: '100%' }}
+      />
+
+      {/* Sidebanner — slides in from left on scroll start */}
+      <img
+        ref={sideBannerRef}
+        src="/images/sidebanner.png"
+        alt="side banner"
+        style={{
+          position: 'absolute',
+          left: '2%',
+          top: 'calc(50% - 35vh)',
+          zIndex: 8,
+          height: '70vh',
+          width: 'auto',
+          maxWidth: '300px',
+          objectFit: 'contain',
+          pointerEvents: 'none',
+          opacity: 0,
+        }}
       />
 
       {/* Overlay headline — fades in after explosion frames */}
