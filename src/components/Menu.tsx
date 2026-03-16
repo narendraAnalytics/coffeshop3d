@@ -1,7 +1,8 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import CoffeeScene from './CoffeeScene'
+import coffeeIconSrc from '../../images/coffeeicon.png'
 
 const MENU_ITEMS = [
   {
@@ -46,6 +47,7 @@ export default function Menu() {
   const sectionRef = useRef<HTMLElement>(null)
   const titleRef   = useRef<HTMLHeadingElement>(null)
   const cardsRef   = useRef<HTMLDivElement>(null)
+  const cupRef     = useRef<HTMLImageElement>(null)
 
   useGSAP(
     () => {
@@ -81,9 +83,59 @@ export default function Menu() {
           },
         }
       )
+
     },
     { scope: sectionRef }
   )
+
+  // Cup animation — driven by getBoundingClientRect(), bypasses ScrollTrigger entirely
+  useEffect(() => {
+    const cup     = cupRef.current
+    const section = sectionRef.current
+    if (!cup || !section) return
+
+    // Start hidden, off-screen left
+    gsap.set(cup, { x: -300, y: 20, rotation: -15, opacity: 0, scale: 0.85 })
+
+    // quickTo gives smooth follow (scrub-like feel) without ScrollTrigger
+    const moveX     = gsap.quickTo(cup, 'x',        { duration: 0.5, ease: 'power2.out' })
+    const moveY     = gsap.quickTo(cup, 'y',        { duration: 0.5, ease: 'power2.out' })
+    const moveRot   = gsap.quickTo(cup, 'rotation', { duration: 0.5, ease: 'power2.out' })
+    const moveOpac  = gsap.quickTo(cup, 'opacity',  { duration: 0.3 })
+    const moveScale = gsap.quickTo(cup, 'scale',    { duration: 0.5, ease: 'power2.out' })
+
+    const update = () => {
+      const rect = section.getBoundingClientRect()
+      const sH   = section.offsetHeight
+      const vH   = window.innerHeight
+      const maxX = window.innerWidth - 320
+      const maxY = Math.max(sH - 320, 100)
+
+      // Section not yet reached — keep hidden
+      if (rect.top > 0) {
+        moveOpac(0)
+        return
+      }
+
+      // progress 0 = section top at viewport top
+      // progress 1 = section bottom at viewport center
+      const p = Math.max(0, Math.min(1, -rect.top / (sH - vH / 2)))
+
+      // Cubic ease-in-out on progress for organic movement
+      const ep = p < 0.5 ? 2 * p * p : -1 + (4 - 2 * p) * p
+
+      moveX(-300 + ep * (maxX + 300))
+      moveY(20   + ep * (maxY - 20))
+      moveRot(-15 + ep * 27)
+      moveOpac(Math.min(p * 6, 0.85))
+      moveScale(0.85 + ep * 0.25)
+    }
+
+    window.addEventListener('scroll', update, { passive: true })
+    update() // run once on mount to set correct initial state
+
+    return () => window.removeEventListener('scroll', update)
+  }, [])
 
   return (
     <section
@@ -110,8 +162,26 @@ export default function Menu() {
         <CoffeeScene />
       </div>
 
+      {/* Flowing cup — z:5 floats above all content, pointer-events:none */}
+      <img
+        ref={cupRef}
+        src={coffeeIconSrc}
+        alt=""
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '280px',
+          pointerEvents: 'none',
+          zIndex: 5,
+          opacity: 0,
+          willChange: 'transform',
+          filter: 'drop-shadow(0 8px 24px rgba(196,154,60,0.35))',
+        }}
+      />
+
       {/* Content */}
-      <div style={{ position: 'relative', zIndex: 1, maxWidth: '1100px', margin: '0 auto' }}>
+      <div style={{ position: 'relative', zIndex: 2, maxWidth: '1100px', margin: '0 auto' }}>
         {/* Section header */}
         <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
           <p
