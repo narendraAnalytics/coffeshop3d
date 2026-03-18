@@ -111,9 +111,22 @@ export default function Menu() {
       const maxX = window.innerWidth - 320
       const maxY = Math.max(sH - 320, 100)
 
-      // Section not yet reached — keep hidden
-      if (rect.top > 0) {
+      // Far below viewport — pre-position above center, keep hidden
+      if (rect.top >= vH) {
+        gsap.set(cup, { x: window.innerWidth / 2 - 140, y: -220, scale: 0.5, rotation: -25 })
         moveOpac(0)
+        return
+      }
+
+      // Entrance zone: section scrolling into view — cup drops from top-center
+      if (rect.top > 0) {
+        const entranceP = (vH - rect.top) / vH                          // 0 → 1
+        const eased = entranceP * entranceP * (3 - 2 * entranceP)       // smoothstep
+        moveX(window.innerWidth / 2 - 140)
+        moveY(-220 + eased * 280)
+        moveOpac(entranceP * 0.9)
+        moveScale(0.5 + eased * 0.5)
+        moveRot(-25 + eased * 30)
         return
       }
 
