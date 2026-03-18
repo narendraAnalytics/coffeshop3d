@@ -15,13 +15,14 @@ const MENU_ITEMS = [
 ]
 
 export default function Menu() {
-  const sectionRef   = useRef<HTMLElement>(null)
-  const titleRef     = useRef<HTMLHeadingElement>(null)
-  const cupRef       = useRef<HTMLImageElement>(null)
-  const cardInnerRef = useRef<HTMLDivElement>(null)
-  const sheenRef     = useRef<HTMLDivElement>(null)
-  const rotXQ        = useRef<ReturnType<typeof gsap.quickTo> | null>(null)
-  const rotYQ        = useRef<ReturnType<typeof gsap.quickTo> | null>(null)
+  const sectionRef    = useRef<HTMLElement>(null)
+  const titleRef      = useRef<HTMLHeadingElement>(null)
+  const cupRef        = useRef<HTMLImageElement>(null)
+  const cardInnerRef  = useRef<HTMLDivElement>(null)
+  const sheenRef      = useRef<HTMLDivElement>(null)
+  const smokeCanvasRef = useRef<HTMLCanvasElement>(null)
+  const rotXQ         = useRef<ReturnType<typeof gsap.quickTo> | null>(null)
+  const rotYQ         = useRef<ReturnType<typeof gsap.quickTo> | null>(null)
 
   const [activeIdx, setActiveIdx] = useState(0)
   const prev = () => setActiveIdx(i => (i - 1 + MENU_ITEMS.length) % MENU_ITEMS.length)
@@ -120,6 +121,86 @@ export default function Menu() {
     rotYQ.current = gsap.quickTo(el, 'rotationY', { duration: 0.45, ease: 'power2.out' })
   }, [])
 
+  // Smoke / steam particle system
+  useEffect(() => {
+    const canvas = smokeCanvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    const resize = () => {
+      canvas.width  = canvas.offsetWidth
+      canvas.height = canvas.offsetHeight
+    }
+    resize()
+    window.addEventListener('resize', resize)
+
+    interface Particle {
+      x: number; y: number; vx: number; vy: number
+      size: number; life: number; maxLife: number
+      wobble: number; wobbleSpeed: number
+    }
+
+    const particles: Particle[] = []
+    let frameId: number
+    let tick = 0
+
+    const spawn = () => {
+      const cx = canvas.width * (0.25 + Math.random() * 0.5)
+      particles.push({
+        x: cx,
+        y: canvas.height * 0.85,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: -(0.6 + Math.random() * 1.0),
+        size: 18 + Math.random() * 28,
+        life: 0,
+        maxLife: 220 + Math.random() * 160,
+        wobble: Math.random() * Math.PI * 2,
+        wobbleSpeed: 0.008 + Math.random() * 0.015,
+      })
+    }
+
+    const animate = () => {
+      frameId = requestAnimationFrame(animate)
+      tick++
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      if (tick % 18 === 0 && particles.length < 35) spawn()
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i]
+        p.life++
+        p.wobble += p.wobbleSpeed
+        p.size   += 0.25
+        p.x      += p.vx + Math.sin(p.wobble) * 0.5
+        p.y      += p.vy
+
+        if (p.life >= p.maxLife) { particles.splice(i, 1); continue }
+
+        const prog  = p.life / p.maxLife
+        const alpha = prog < 0.2
+          ? (prog / 0.2) * 0.18
+          : prog > 0.7
+            ? ((1 - prog) / 0.3) * 0.18
+            : 0.18
+
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size)
+        g.addColorStop(0, `rgba(245, 225, 195, ${alpha})`)
+        g.addColorStop(1, `rgba(245, 225, 195, 0)`)
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
+        ctx.fillStyle = g
+        ctx.fill()
+      }
+    }
+
+    animate()
+    return () => {
+      cancelAnimationFrame(frameId)
+      window.removeEventListener('resize', resize)
+    }
+  }, [])
+
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const el    = cardInnerRef.current
     const sheen = sheenRef.current
@@ -167,6 +248,19 @@ export default function Menu() {
       >
         <CoffeeScene />
       </div>
+
+      {/* Smoke / steam particles */}
+      <canvas
+        ref={smokeCanvasRef}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          pointerEvents: 'none',
+          zIndex: 1,
+        }}
+      />
 
       {/* Flowing cup — z:5 floats above all content, pointer-events:none */}
       <img
