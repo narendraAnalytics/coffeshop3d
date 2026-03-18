@@ -152,7 +152,7 @@ export default function Menu() {
         minHeight: '100vh',
         padding: '8rem 2rem',
         overflow: 'hidden',
-        background: '#1a0f0a',
+        background: 'linear-gradient(160deg, #5c3018 0%, #3d1e0a 50%, #4a2812 100%)',
       }}
     >
       {/* 3D floating beans background */}
