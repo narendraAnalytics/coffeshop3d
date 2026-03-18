@@ -1,53 +1,29 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import CoffeeScene from './CoffeeScene'
 import coffeeIconSrc from '../../images/coffeeicon.png'
+import menuCard1 from '../../images/menuimages/menucard1.png'
 
 const MENU_ITEMS = [
-  {
-    name: 'Flat White',
-    desc: 'Double ristretto, microfoam milk. Clean and intense.',
-    price: '$5.50',
-    tag: 'Signature',
-  },
-  {
-    name: 'Pour Over',
-    desc: 'Single origin Ethiopian Yirgacheffe, bright and floral.',
-    price: '$6.00',
-    tag: 'Single Origin',
-  },
-  {
-    name: 'Cold Brew',
-    desc: '18-hour steep, served over oat milk and caramel.',
-    price: '$6.50',
-    tag: 'Seasonal',
-  },
-  {
-    name: 'Cortado',
-    desc: 'Equal parts espresso and steamed milk. Perfectly balanced.',
-    price: '$5.00',
-    tag: 'Classic',
-  },
-  {
-    name: 'Oat Latte',
-    desc: 'House oat milk, triple shot, light body, nutty finish.',
-    price: '$6.00',
-    tag: 'Dairy Free',
-  },
-  {
-    name: 'Espresso',
-    desc: 'Pure. Direct. Our house blend, 20g in, 40g out.',
-    price: '$4.00',
-    tag: 'Classic',
-  },
+  { name: 'Espresso' },
+  { name: 'Flat White' },
+  { name: 'Pour Over' },
+  { name: 'Cold Brew' },
+  { name: 'Cortado' },
+  { name: 'Oat Latte' },
 ]
 
 export default function Menu() {
   const sectionRef = useRef<HTMLElement>(null)
   const titleRef   = useRef<HTMLHeadingElement>(null)
-  const cardsRef   = useRef<HTMLDivElement>(null)
   const cupRef     = useRef<HTMLImageElement>(null)
+
+  const [activeIdx, setActiveIdx] = useState(0)
+  const prev = () => setActiveIdx(i => (i - 1 + MENU_ITEMS.length) % MENU_ITEMS.length)
+  const next = () => setActiveIdx(i => (i + 1) % MENU_ITEMS.length)
+
+  const item = MENU_ITEMS[activeIdx]
 
   useGSAP(
     () => {
@@ -66,24 +42,6 @@ export default function Menu() {
           },
         }
       )
-
-      gsap.fromTo(
-        cardsRef.current?.querySelectorAll('.menu-card') ?? [],
-        { y: 80, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.7,
-          ease: 'power2.out',
-          stagger: 0.12,
-          scrollTrigger: {
-            trigger: cardsRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      )
-
     },
     { scope: sectionRef }
   )
@@ -195,6 +153,7 @@ export default function Menu() {
 
       {/* Content */}
       <div style={{ position: 'relative', zIndex: 2, maxWidth: '1100px', margin: '0 auto' }}>
+
         {/* Section header */}
         <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
           <p
@@ -224,119 +183,100 @@ export default function Menu() {
           </h2>
         </div>
 
-        {/* Card grid */}
+        {/* Carousel row: prev arrow + card + next arrow */}
         <div
-          ref={cardsRef}
           style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '1.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0',
           }}
         >
-          {MENU_ITEMS.map((item) => (
-            <div
-              key={item.name}
-              className="menu-card"
+          {/* Prev arrow */}
+          <button
+            onClick={prev}
+            aria-label="Previous"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: '#c49a3c',
+              fontSize: '3rem',
+              cursor: 'pointer',
+              padding: '0 1.5rem',
+              opacity: 0.85,
+              lineHeight: 1,
+              flexShrink: 0,
+              transition: 'opacity 0.2s',
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '1' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '0.85' }}
+          >
+            ‹
+          </button>
+
+          {/* Menu card image */}
+          <img
+            src={menuCard1}
+            alt={item.name}
+            style={{
+              width: '100%',
+              maxWidth: '420px',
+              display: 'block',
+              filter: 'drop-shadow(0 12px 40px rgba(0,0,0,0.6))',
+            }}
+          />
+
+          {/* Next arrow */}
+          <button
+            onClick={next}
+            aria-label="Next"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: '#c49a3c',
+              fontSize: '3rem',
+              cursor: 'pointer',
+              padding: '0 1.5rem',
+              opacity: 0.85,
+              lineHeight: 1,
+              flexShrink: 0,
+              transition: 'opacity 0.2s',
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '1' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '0.85' }}
+          >
+            ›
+          </button>
+        </div>
+
+        {/* Dot indicators */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '8px',
+            marginTop: '1.75rem',
+          }}
+        >
+          {MENU_ITEMS.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setActiveIdx(i)}
+              aria-label={`Go to ${MENU_ITEMS[i].name}`}
               style={{
-                background: 'rgba(45, 26, 16, 0.75)',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
-                border: '1px solid rgba(196, 154, 60, 0.2)',
-                borderRadius: '4px',
-                padding: '2rem',
-                transition: 'transform 0.3s ease, border-color 0.3s ease',
-                cursor: 'default',
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                border: '1px solid #c49a3c',
+                background: i === activeIdx ? '#c49a3c' : 'transparent',
+                cursor: 'pointer',
+                padding: 0,
+                transition: 'background 0.25s',
               }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget as HTMLDivElement
-                el.style.transform = 'translateY(-6px)'
-                el.style.borderColor = 'rgba(196, 154, 60, 0.6)'
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget as HTMLDivElement
-                el.style.transform = 'translateY(0)'
-                el.style.borderColor = 'rgba(196, 154, 60, 0.2)'
-              }}
-            >
-              <span
-                style={{
-                  color: '#c4622d',
-                  fontSize: '0.7rem',
-                  letterSpacing: '0.2em',
-                  textTransform: 'uppercase',
-                  fontWeight: 600,
-                }}
-              >
-                {item.tag}
-              </span>
-              <h3
-                style={{
-                  color: '#f5e6d3',
-                  margin: '0.75rem 0 0.5rem',
-                  fontSize: '1.4rem',
-                  fontFamily: "'Playfair Display', Georgia, serif",
-                  fontWeight: 700,
-                }}
-              >
-                {item.name}
-              </h3>
-              <p
-                style={{
-                  color: '#e8d5b7',
-                  fontSize: '0.9rem',
-                  lineHeight: 1.65,
-                  margin: '0 0 1.5rem',
-                  opacity: 0.85,
-                }}
-              >
-                {item.desc}
-              </p>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
-              >
-                <span
-                  style={{
-                    color: '#c49a3c',
-                    fontSize: '1.1rem',
-                    fontWeight: 600,
-                  }}
-                >
-                  {item.price}
-                </span>
-                <button
-                  style={{
-                    background: 'transparent',
-                    border: '1px solid #c4622d',
-                    color: '#c4622d',
-                    padding: '0.4rem 1.1rem',
-                    fontSize: '0.7rem',
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    fontFamily: 'inherit',
-                  }}
-                  onMouseEnter={(e) => {
-                    const el = e.currentTarget as HTMLButtonElement
-                    el.style.background = '#c4622d'
-                    el.style.color = '#f5e6d3'
-                  }}
-                  onMouseLeave={(e) => {
-                    const el = e.currentTarget as HTMLButtonElement
-                    el.style.background = 'transparent'
-                    el.style.color = '#c4622d'
-                  }}
-                >
-                  Order
-                </button>
-              </div>
-            </div>
+            />
           ))}
         </div>
+
       </div>
     </section>
   )
