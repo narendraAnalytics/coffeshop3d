@@ -15,9 +15,13 @@ const MENU_ITEMS = [
 ]
 
 export default function Menu() {
-  const sectionRef = useRef<HTMLElement>(null)
-  const titleRef   = useRef<HTMLHeadingElement>(null)
-  const cupRef     = useRef<HTMLImageElement>(null)
+  const sectionRef   = useRef<HTMLElement>(null)
+  const titleRef     = useRef<HTMLHeadingElement>(null)
+  const cupRef       = useRef<HTMLImageElement>(null)
+  const cardInnerRef = useRef<HTMLDivElement>(null)
+  const sheenRef     = useRef<HTMLDivElement>(null)
+  const rotXQ        = useRef<ReturnType<typeof gsap.quickTo> | null>(null)
+  const rotYQ        = useRef<ReturnType<typeof gsap.quickTo> | null>(null)
 
   const [activeIdx, setActiveIdx] = useState(0)
   const prev = () => setActiveIdx(i => (i - 1 + MENU_ITEMS.length) % MENU_ITEMS.length)
@@ -107,6 +111,37 @@ export default function Menu() {
 
     return () => window.removeEventListener('scroll', update)
   }, [])
+
+  // 3D tilt quickTo — initialized once, works across all cards
+  useEffect(() => {
+    const el = cardInnerRef.current
+    if (!el) return
+    rotXQ.current = gsap.quickTo(el, 'rotationX', { duration: 0.45, ease: 'power2.out' })
+    rotYQ.current = gsap.quickTo(el, 'rotationY', { duration: 0.45, ease: 'power2.out' })
+  }, [])
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el    = cardInnerRef.current
+    const sheen = sheenRef.current
+    if (!el || !rotXQ.current || !rotYQ.current) return
+    const rect   = el.getBoundingClientRect()
+    const x      = (e.clientX - rect.left)  / rect.width   // 0 → 1
+    const y      = (e.clientY - rect.top)   / rect.height  // 0 → 1
+    const maxDeg = 14
+    rotXQ.current((y - 0.5) * -maxDeg * 2)
+    rotYQ.current((x - 0.5) *  maxDeg * 2)
+    if (sheen) {
+      sheen.style.background = `radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(255,255,255,0.28) 0%, transparent 58%)`
+      sheen.style.opacity = '1'
+    }
+  }
+
+  const handleMouseLeave = () => {
+    if (rotXQ.current) rotXQ.current(0)
+    if (rotYQ.current) rotYQ.current(0)
+    const sheen = sheenRef.current
+    if (sheen) sheen.style.opacity = '0'
+  }
 
   return (
     <section
@@ -214,17 +249,52 @@ export default function Menu() {
             ‹
           </button>
 
-          {/* Menu card image */}
-          <img
-            src={menuCard1}
-            alt={item.name}
+          {/* Menu card — perspective wrapper */}
+          <div
             style={{
               width: '100%',
               maxWidth: '420px',
-              display: 'block',
-              filter: 'drop-shadow(0 12px 40px rgba(0,0,0,0.6))',
+              perspective: '1000px',
+              perspectiveOrigin: 'center center',
+              flexShrink: 0,
             }}
-          />
+          >
+            {/* Tilt target — GSAP rotationX/Y applied here */}
+            <div
+              ref={cardInnerRef}
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+              style={{
+                position: 'relative',
+                transformStyle: 'preserve-3d',
+                willChange: 'transform',
+                cursor: 'default',
+              }}
+            >
+              <img
+                src={menuCard1}
+                alt={item.name}
+                style={{
+                  width: '100%',
+                  display: 'block',
+                  filter: 'drop-shadow(0 12px 40px rgba(0,0,0,0.6))',
+                }}
+              />
+              {/* Glossy sheen overlay */}
+              <div
+                ref={sheenRef}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  pointerEvents: 'none',
+                  opacity: 0,
+                  transition: 'opacity 0.35s ease',
+                  mixBlendMode: 'overlay',
+                  borderRadius: '2px',
+                }}
+              />
+            </div>
+          </div>
 
           {/* Next arrow */}
           <button
