@@ -4,6 +4,13 @@ import gsap from 'gsap'
 import CoffeeScene from './CoffeeScene'
 import coffeeIconSrc from '../../images/coffeeicon.png'
 import menuCard1 from '../../images/menuimages/menucard1.png'
+import menuCard2 from '../../images/menuimages/menucard2.png'
+import menuCard3 from '../../images/menuimages/menucard3.png'
+import menuCard4 from '../../images/menuimages/menucard4.png'
+import menuCard5 from '../../images/menuimages/menucard5.png'
+import menuCard6 from '../../images/menuimages/menucard6.png'
+
+const CARD_IMAGES = [menuCard1, menuCard2, menuCard3, menuCard4, menuCard5, menuCard6]
 
 const MENU_ITEMS = [
   { name: 'Espresso' },
@@ -366,7 +373,7 @@ export default function Menu() {
               }}
             >
               <img
-                src={menuCard1}
+                src={CARD_IMAGES[activeIdx]}
                 alt={item.name}
                 style={{
                   width: '100%',
