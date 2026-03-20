@@ -3,22 +3,44 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import CoffeeScene from './CoffeeScene'
 import coffeeIconSrc from '../../images/coffeeicon.png'
-import menuCard1 from '../../images/menuimages/menucard1.png'
-import menuCard2 from '../../images/menuimages/menucard2.png'
-import menuCard3 from '../../images/menuimages/menucard3.png'
-import menuCard4 from '../../images/menuimages/menucard4.png'
-import menuCard5 from '../../images/menuimages/menucard5.png'
-import menuCard6 from '../../images/menuimages/menucard6.png'
-
-const CARD_IMAGES = [menuCard1, menuCard2, menuCard3, menuCard4, menuCard5, menuCard6]
 
 const MENU_ITEMS = [
-  { name: 'Espresso' },
-  { name: 'Flat White' },
-  { name: 'Pour Over' },
-  { name: 'Cold Brew' },
-  { name: 'Cortado' },
-  { name: 'Oat Latte' },
+  {
+    name: 'Espresso',
+    description: 'A concentrated shot of pure coffee, delivering intense flavour and velvety crema in every sip.',
+    tags: ['Hot', 'Single Origin', 'Strong'],
+    videoSrc: '/videos/menuespressovideo.mp4',
+  },
+  {
+    name: 'Flat White',
+    description: 'Smooth double ristretto balanced with silky microfoam milk — the perfect harmony of espresso and cream.',
+    tags: ['Hot', 'Milk-Based', 'Smooth'],
+    videoSrc: '/videos/menuflatwhitevideo.mp4',
+  },
+  {
+    name: 'Pour Over',
+    description: 'Slow, deliberate brewing that coaxes out delicate floral and fruit notes from single-origin beans.',
+    tags: ['Hot', 'Filter', 'Bright'],
+    videoSrc: '/videos/menupourovervideo.mp4',
+  },
+  {
+    name: 'Cold Brew',
+    description: 'Steeped for 18 hours in cold water, yielding a smooth, low-acid concentrate served over ice.',
+    tags: ['Cold', 'Slow-Steeped', 'Bold'],
+    videoSrc: '/videos/menucoldbrewvideo.mp4',
+  },
+  {
+    name: 'Cortado',
+    description: 'Equal parts espresso and warm milk — bold enough to taste, gentle enough to savour slowly.',
+    tags: ['Hot', 'Balanced', 'Small'],
+    videoSrc: '/videos/menucortadovideo.mp4',
+  },
+  {
+    name: 'Oat Latte',
+    description: 'Creamy oat milk steamed to perfection, paired with our house espresso blend. Dairy-free, full flavour.',
+    tags: ['Hot', 'Plant-Based', 'Creamy'],
+    videoSrc: '/videos/menuoatlattevideo.mp4',
+  },
 ]
 
 export default function Menu() {
@@ -28,6 +50,7 @@ export default function Menu() {
   const cardInnerRef  = useRef<HTMLDivElement>(null)
   const sheenRef      = useRef<HTMLDivElement>(null)
   const smokeCanvasRef = useRef<HTMLCanvasElement>(null)
+  const videoRef      = useRef<HTMLVideoElement>(null)
   const rotXQ         = useRef<ReturnType<typeof gsap.quickTo> | null>(null)
   const rotYQ         = useRef<ReturnType<typeof gsap.quickTo> | null>(null)
 
@@ -64,10 +87,8 @@ export default function Menu() {
     const section = sectionRef.current
     if (!cup || !section) return
 
-    // Start hidden, off-screen left
     gsap.set(cup, { x: -300, y: 20, rotation: -15, opacity: 0, scale: 0.85 })
 
-    // quickTo gives smooth follow (scrub-like feel) without ScrollTrigger
     const moveX     = gsap.quickTo(cup, 'x',        { duration: 0.5, ease: 'power2.out' })
     const moveY     = gsap.quickTo(cup, 'y',        { duration: 0.5, ease: 'power2.out' })
     const moveRot   = gsap.quickTo(cup, 'rotation', { duration: 0.5, ease: 'power2.out' })
@@ -81,17 +102,15 @@ export default function Menu() {
       const maxX = window.innerWidth - 320
       const maxY = Math.max(sH - 320, 100)
 
-      // Far below viewport — pre-position above center, keep hidden
       if (rect.top >= vH) {
         gsap.set(cup, { x: window.innerWidth / 2 - 140, y: -220, scale: 0.5, rotation: -25 })
         moveOpac(0)
         return
       }
 
-      // Entrance zone: section scrolling into view — cup drops from top-center
       if (rect.top > 0) {
-        const entranceP = (vH - rect.top) / vH                          // 0 → 1
-        const eased = entranceP * entranceP * (3 - 2 * entranceP)       // smoothstep
+        const entranceP = (vH - rect.top) / vH
+        const eased = entranceP * entranceP * (3 - 2 * entranceP)
         moveX(window.innerWidth / 2 - 140)
         moveY(-220 + eased * 280)
         moveOpac(entranceP * 0.9)
@@ -100,11 +119,7 @@ export default function Menu() {
         return
       }
 
-      // progress 0 = section top at viewport top
-      // progress 1 = section bottom at viewport center
       const p = Math.max(0, Math.min(1, -rect.top / (sH - vH / 2)))
-
-      // Cubic ease-in-out on progress for organic movement
       const ep = p < 0.5 ? 2 * p * p : -1 + (4 - 2 * p) * p
 
       moveX(-300 + ep * (maxX + 300))
@@ -115,7 +130,7 @@ export default function Menu() {
     }
 
     window.addEventListener('scroll', update, { passive: true })
-    update() // run once on mount to set correct initial state
+    update()
 
     return () => window.removeEventListener('scroll', update)
   }, [])
@@ -127,6 +142,21 @@ export default function Menu() {
     rotXQ.current = gsap.quickTo(el, 'rotationX', { duration: 0.45, ease: 'power2.out' })
     rotYQ.current = gsap.quickTo(el, 'rotationY', { duration: 0.45, ease: 'power2.out' })
   }, [])
+
+  // GSAP fade-in on card switch
+  useEffect(() => {
+    const el = cardInnerRef.current
+    if (!el) return
+    gsap.fromTo(el, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' })
+  }, [activeIdx])
+
+  // Reload video when card changes
+  useEffect(() => {
+    const v = videoRef.current
+    if (!v) return
+    v.load()
+    v.play().catch(() => {})
+  }, [activeIdx])
 
   // Smoke / steam particle system
   useEffect(() => {
@@ -213,8 +243,8 @@ export default function Menu() {
     const sheen = sheenRef.current
     if (!el || !rotXQ.current || !rotYQ.current) return
     const rect   = el.getBoundingClientRect()
-    const x      = (e.clientX - rect.left)  / rect.width   // 0 → 1
-    const y      = (e.clientY - rect.top)   / rect.height  // 0 → 1
+    const x      = (e.clientX - rect.left)  / rect.width
+    const y      = (e.clientY - rect.top)   / rect.height
     const maxDeg = 14
     rotXQ.current((y - 0.5) * -maxDeg * 2)
     rotYQ.current((x - 0.5) *  maxDeg * 2)
@@ -269,7 +299,7 @@ export default function Menu() {
         }}
       />
 
-      {/* Flowing cup — z:5 floats above all content, pointer-events:none */}
+      {/* Flowing cup */}
       <img
         ref={cupRef}
         src={coffeeIconSrc}
@@ -350,11 +380,11 @@ export default function Menu() {
             ‹
           </button>
 
-          {/* Menu card — perspective wrapper */}
+          {/* Card perspective wrapper */}
           <div
             style={{
               width: '100%',
-              maxWidth: '420px',
+              maxWidth: '960px',
               perspective: '1000px',
               perspectiveOrigin: 'center center',
               flexShrink: 0,
@@ -370,17 +400,144 @@ export default function Menu() {
                 transformStyle: 'preserve-3d',
                 willChange: 'transform',
                 cursor: 'default',
+                display: 'flex',
+                borderRadius: '20px',
+                overflow: 'hidden',
+                background: 'rgba(25,10,3,0.88)',
+                backdropFilter: 'blur(12px)',
+                boxShadow: '0 24px 80px rgba(0,0,0,0.65)',
+                minHeight: '420px',
               }}
             >
-              <img
-                src={CARD_IMAGES[activeIdx]}
-                alt={item.name}
+              {/* LEFT: Video */}
+              <div
                 style={{
-                  width: '100%',
-                  display: 'block',
-                  filter: 'drop-shadow(0 12px 40px rgba(0,0,0,0.6))',
+                  width: '60%',
+                  flexShrink: 0,
+                  position: 'relative',
+                  overflow: 'hidden',
                 }}
-              />
+              >
+                <video
+                  ref={videoRef}
+                  src={item.videoSrc}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block',
+                  }}
+                />
+                {/* Right-side fade blending video into the dark panel */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'linear-gradient(to right, transparent 55%, rgba(25,10,3,0.88) 100%)',
+                    pointerEvents: 'none',
+                  }}
+                />
+              </div>
+
+              {/* RIGHT: Text */}
+              <div
+                style={{
+                  flex: 1,
+                  padding: '2.5rem 2rem 2.5rem 1.5rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  gap: '1.25rem',
+                }}
+              >
+                {/* Gold eyebrow label */}
+                <p
+                  style={{
+                    color: '#c49a3c',
+                    fontSize: '0.7rem',
+                    letterSpacing: '0.25em',
+                    textTransform: 'uppercase',
+                    margin: 0,
+                    fontWeight: 500,
+                  }}
+                >
+                  Signature Brew
+                </p>
+
+                {/* Drink name */}
+                <h3
+                  style={{
+                    color: '#f5e6d3',
+                    fontFamily: "'Playfair Display', Georgia, serif",
+                    fontSize: 'clamp(1.6rem, 3vw, 2.2rem)',
+                    fontWeight: 700,
+                    margin: 0,
+                    lineHeight: 1.1,
+                  }}
+                >
+                  {item.name}
+                </h3>
+
+                {/* Description */}
+                <p
+                  style={{
+                    color: '#c4a882',
+                    fontSize: '0.92rem',
+                    lineHeight: 1.75,
+                    margin: 0,
+                  }}
+                >
+                  {item.description}
+                </p>
+
+                {/* Tag badges */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {item.tags.map(tag => (
+                    <span
+                      key={tag}
+                      style={{
+                        border: '1px solid rgba(196,154,60,0.5)',
+                        color: '#c49a3c',
+                        fontSize: '0.7rem',
+                        letterSpacing: '0.1em',
+                        textTransform: 'uppercase',
+                        padding: '0.25rem 0.75rem',
+                        borderRadius: '100px',
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Add to Order button */}
+                <button
+                  style={{
+                    alignSelf: 'flex-start',
+                    marginTop: '0.5rem',
+                    background: '#c49a3c',
+                    color: '#1a0a00',
+                    border: 'none',
+                    padding: '0.7rem 1.75rem',
+                    borderRadius: '100px',
+                    fontWeight: 700,
+                    fontSize: '0.85rem',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    transition: 'background 0.2s',
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#d4aa4c' }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#c49a3c' }}
+                >
+                  Add to Order
+                </button>
+              </div>
+
               {/* Glossy sheen overlay */}
               <div
                 ref={sheenRef}
@@ -391,7 +548,7 @@ export default function Menu() {
                   opacity: 0,
                   transition: 'opacity 0.35s ease',
                   mixBlendMode: 'overlay',
-                  borderRadius: '2px',
+                  borderRadius: '20px',
                 }}
               />
             </div>
