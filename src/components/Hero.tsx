@@ -1,14 +1,19 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import './Hero.css'
 
-const FRAME_COUNT = 75
-const BLAST_AT    = 0.47  // scroll progress (0→1) when cup explodes — adjust to match visual
-const BEANS_AT    = 0.52  // beans scatter on table just after the blast
+const FRAME_COUNT     = 300
+const FRAME_COUNT_ESP = 208
+const BLAST_AT        = 0.47  // scroll progress (0→1) when cup explodes — adjust to match visual
+const BEANS_AT        = 0.52  // beans scatter on table just after the blast
 
 function framePath(n: number) {
   return `/frames/ezgif-frame-${String(n).padStart(3, '0')}.jpg`
+}
+
+function framePath1(n: number) {
+  return `/frames1/ezgif-frame-${String(n).padStart(3, '0')}.jpg`
 }
 
 // Draw image filling the canvas while maintaining aspect (like CSS object-fit: cover)
@@ -121,8 +126,11 @@ export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
   const canvasRef  = useRef<HTMLCanvasElement>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
-  const imagesRef  = useRef<HTMLImageElement[]>([])
-  const frameObj   = useRef({ frame: 0 })
+  const imagesRef   = useRef<HTMLImageElement[]>([])
+  const images1Ref  = useRef<HTMLImageElement[]>([])
+  const frameObj    = useRef({ frame: 0 })
+  const modeRef     = useRef<'flat' | 'espresso'>('flat')
+  const [activeMode, setActiveMode] = useState<'flat' | 'espresso'>('flat')
 
   // Audio refs
   const audioCtxRef  = useRef<AudioContext | null>(null)
@@ -161,6 +169,17 @@ export default function Hero() {
     imagesRef.current = images
   }, [])
 
+  // Preload Espresso Coffee frames
+  useEffect(() => {
+    const images: HTMLImageElement[] = []
+    for (let i = 1; i <= FRAME_COUNT_ESP; i++) {
+      const img = new Image()
+      img.src = framePath1(i)
+      images[i - 1] = img
+    }
+    images1Ref.current = images
+  }, [])
+
   // Resize handler
   useEffect(() => {
     const handleResize = () => {
@@ -169,7 +188,13 @@ export default function Hero() {
       if (!canvas || !ctx) return
       canvas.width  = canvas.offsetWidth
       canvas.height = canvas.offsetHeight
-      const img = imagesRef.current[Math.round(frameObj.current.frame)]
+      const progress = frameObj.current.frame / (FRAME_COUNT - 1)
+      let img: HTMLImageElement | undefined
+      if (modeRef.current === 'espresso') {
+        img = images1Ref.current[Math.round(progress * (FRAME_COUNT_ESP - 1))]
+      } else {
+        img = imagesRef.current[Math.round(frameObj.current.frame)]
+      }
       if (img?.complete) drawImageCover(ctx, img, canvas.width, canvas.height)
     }
     window.addEventListener('resize', handleResize)
@@ -326,13 +351,24 @@ export default function Hero() {
     }
 
     const render = () => {
-      const idx = Math.round(frameObj.current.frame)
-      const img = imagesRef.current[idx]
-      if (img?.complete) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-        drawImageCover(ctx, img, canvas.width, canvas.height)
-      }
       const progress = frameObj.current.frame / (FRAME_COUNT - 1)
+
+      if (modeRef.current === 'espresso') {
+        const espIdx = Math.round(progress * (FRAME_COUNT_ESP - 1))
+        const img = images1Ref.current[espIdx]
+        if (img?.complete) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          drawImageCover(ctx, img, canvas.width, canvas.height)
+        }
+      } else {
+        const idx = Math.round(frameObj.current.frame)
+        const img = imagesRef.current[idx]
+        if (img?.complete) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          drawImageCover(ctx, img, canvas.width, canvas.height)
+        }
+      }
+
       updateAudio(progress)
       updateBanner(progress)
     }
@@ -379,6 +415,33 @@ export default function Hero() {
     }
   }, [])
 
+  const handleModeSwitch = (mode: 'flat' | 'espresso') => {
+    if (modeRef.current === mode) return
+    modeRef.current = mode
+    blastFiredRef.current = false
+    beansFiredRef.current = false
+    setActiveMode(mode)
+
+    const canvas = canvasRef.current
+    const ctx = canvas?.getContext('2d')
+    if (!canvas || !ctx) return
+    const progress = frameObj.current.frame / (FRAME_COUNT - 1)
+    if (mode === 'espresso') {
+      const espIdx = Math.round(progress * (FRAME_COUNT_ESP - 1))
+      const img = images1Ref.current[espIdx]
+      if (img?.complete) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        drawImageCover(ctx, img, canvas.width, canvas.height)
+      }
+    } else {
+      const img = imagesRef.current[Math.round(frameObj.current.frame)]
+      if (img?.complete) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        drawImageCover(ctx, img, canvas.width, canvas.height)
+      }
+    }
+  }
+
   return (
     <section
       ref={sectionRef}
@@ -390,6 +453,22 @@ export default function Hero() {
         ref={canvasRef}
         className="hero-canvas"
       />
+
+      {/* Mode selector — top-center, visible before scrolling */}
+      <div className="hero-mode-buttons">
+        <button
+          className={`hero-mode-btn${activeMode === 'flat' ? ' hero-mode-btn--active' : ''}`}
+          onClick={() => handleModeSwitch('flat')}
+        >
+          Flat Coffee
+        </button>
+        <button
+          className={`hero-mode-btn${activeMode === 'espresso' ? ' hero-mode-btn--active' : ''}`}
+          onClick={() => handleModeSwitch('espresso')}
+        >
+          Espresso Coffee
+        </button>
+      </div>
 
       {/* Sidebanner — slides in from left on scroll start */}
       <img

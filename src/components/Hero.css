@@ -89,3 +89,37 @@
   pointer-events: none;
   z-index: 5;
 }
+
+/* --- Mode selector buttons (top-center of hero) --- */
+
+.hero-mode-buttons {
+  position: absolute;
+  top: 5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  gap: 0.75rem;
+  pointer-events: auto;
+}
+
+.hero-mode-btn {
+  display: inline-block;
+  padding: 0.625rem 1.75rem;
+  border: 1px solid #c49a3c;
+  color: #c49a3c;
+  background: transparent;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+  white-space: nowrap;
+}
+
+.hero-mode-btn:hover,
+.hero-mode-btn--active {
+  background: #c49a3c;
+  color: #1a0f0a;
+}
