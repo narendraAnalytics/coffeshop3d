@@ -143,6 +143,7 @@ export default function Hero() {
   const blastFiredRef = useRef(false)
   const beansFiredRef = useRef(false)
   const sideBannerRef = useRef<HTMLImageElement>(null)
+  const heroSTRef     = useRef<ScrollTrigger | null>(null)
 
   // Preload all frames
   useEffect(() => {
@@ -388,6 +389,7 @@ export default function Hero() {
         anticipatePin: 1,
       },
     })
+    heroSTRef.current = frameTween.scrollTrigger ?? null
 
     // Overlay text fades in after the explosion (mid-scroll)
     gsap.fromTo(
@@ -422,23 +424,19 @@ export default function Hero() {
     beansFiredRef.current = false
     setActiveMode(mode)
 
+    // Reset scroll to the start of the hero animation so it plays from frame 1
+    const st = heroSTRef.current
+    if (st) {
+      window.scrollTo({ top: st.start, behavior: 'instant' as ScrollBehavior })
+    }
+
     const canvas = canvasRef.current
     const ctx = canvas?.getContext('2d')
     if (!canvas || !ctx) return
-    const progress = frameObj.current.frame / (FRAME_COUNT - 1)
-    if (mode === 'espresso') {
-      const espIdx = Math.round(progress * (FRAME_COUNT_ESP - 1))
-      const img = images1Ref.current[espIdx]
-      if (img?.complete) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-        drawImageCover(ctx, img, canvas.width, canvas.height)
-      }
-    } else {
-      const img = imagesRef.current[Math.round(frameObj.current.frame)]
-      if (img?.complete) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-        drawImageCover(ctx, img, canvas.width, canvas.height)
-      }
+    const img = mode === 'espresso' ? images1Ref.current[0] : imagesRef.current[0]
+    if (img?.complete) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      drawImageCover(ctx, img, canvas.width, canvas.height)
     }
   }
 
