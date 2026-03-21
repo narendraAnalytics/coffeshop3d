@@ -10,12 +10,14 @@ const MENU_ITEMS = [
     description: 'A concentrated shot of pure coffee, delivering intense flavour and velvety crema in every sip.',
     tags: ['Hot', 'Single Origin', 'Strong'],
     videoSrc: '/videos/menuespressovideo.mp4',
+    price: '₹180',
   },
   {
-    name: 'Flat White',
-    description: 'Smooth double ristretto balanced with silky microfoam milk — the perfect harmony of espresso and cream.',
-    tags: ['Hot', 'Milk-Based', 'Smooth'],
-    videoSrc: '/videos/menuflatwhitevideo.mp4',
+    name: 'Americano',
+    description: 'Espresso diluted with hot water — bold, clean, and full-bodied with all the depth of a double shot.',
+    tags: ['Hot', 'Black', 'Bold'],
+    videoSrc: '/videos/americanocoffee.mp4',
+    price: '₹200',
   },
   {
     name: 'Pour Over',
@@ -513,6 +515,13 @@ export default function Menu() {
                     </span>
                   ))}
                 </div>
+
+                {/* Price */}
+                {item.price && (
+                  <p style={{ margin: 0, color: '#f5e6d3', fontSize: '1.5rem', fontWeight: 700, fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.02em' }}>
+                    {item.price}
+                  </p>
+                )}
 
                 {/* Add to Order button */}
                 <button
