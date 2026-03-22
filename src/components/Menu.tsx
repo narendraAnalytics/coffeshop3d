@@ -48,28 +48,18 @@ const MENU_ITEMS = [
     price: '₹350',
   },
   {
-    name: 'Pour Over',
+    name: 'Frappuccino',
     description: 'Slow, deliberate brewing that coaxes out delicate floral and fruit notes from single-origin beans.',
     tags: ['Hot', 'Filter', 'Bright'],
-    videoSrc: '/videos/menupourovervideo.mp4',
+    videoSrc: '/videos/Frappe.mp4',
+    price: '₹400'
   },
   {
     name: 'Cold Brew',
     description: 'Steeped for 18 hours in cold water, yielding a smooth, low-acid concentrate served over ice.',
     tags: ['Cold', 'Slow-Steeped', 'Bold'],
-    videoSrc: '/videos/menucoldbrewvideo.mp4',
-  },
-  {
-    name: 'Cortado',
-    description: 'Equal parts espresso and warm milk — bold enough to taste, gentle enough to savour slowly.',
-    tags: ['Hot', 'Balanced', 'Small'],
-    videoSrc: '/videos/menucortadovideo.mp4',
-  },
-  {
-    name: 'Oat Latte',
-    description: 'Creamy oat milk steamed to perfection, paired with our house espresso blend. Dairy-free, full flavour.',
-    tags: ['Hot', 'Plant-Based', 'Creamy'],
-    videoSrc: '/videos/menuoatlattevideo.mp4',
+    videoSrc: '/videos/Coldbrew.mp4',
+    price: '₹350',
   },
 ]
 
