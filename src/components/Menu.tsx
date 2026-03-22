@@ -3,6 +3,7 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import CoffeeScene from './CoffeeScene'
 import coffeeIconSrc from '../../images/coffeeicon.png'
+import './Menu.css'
 
 const MENU_ITEMS = [
   {
@@ -282,118 +283,34 @@ export default function Menu() {
   }
 
   return (
-    <section
-      ref={sectionRef}
-      id="menu"
-      style={{
-        position: 'relative',
-        minHeight: '100vh',
-        padding: '8rem 2rem',
-        overflow: 'hidden',
-        background: 'linear-gradient(160deg, #5c3018 0%, #3d1e0a 50%, #4a2812 100%)',
-      }}
-    >
+    <section ref={sectionRef} id="menu" className="menu-section">
       {/* 3D floating beans background */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          opacity: 0.55,
-          pointerEvents: 'none',
-          zIndex: 0,
-        }}
-      >
+      <div className="menu-bg-beans">
         <CoffeeScene />
       </div>
 
       {/* Smoke / steam particles */}
-      <canvas
-        ref={smokeCanvasRef}
-        style={{
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-          pointerEvents: 'none',
-          zIndex: 1,
-        }}
-      />
+      <canvas ref={smokeCanvasRef} className="menu-smoke-canvas" />
 
       {/* Flowing cup */}
-      <img
-        ref={cupRef}
-        src={coffeeIconSrc}
-        alt=""
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '280px',
-          pointerEvents: 'none',
-          zIndex: 5,
-          opacity: 0,
-          willChange: 'transform',
-          filter: 'drop-shadow(0 8px 24px rgba(196,154,60,0.35))',
-        }}
-      />
+      <img ref={cupRef} src={coffeeIconSrc} alt="" className="menu-cup-img" />
 
       {/* Content */}
-      <div style={{ position: 'relative', zIndex: 2, maxWidth: '1100px', margin: '0 auto' }}>
+      <div className="menu-content">
 
         {/* Section header */}
-        <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-          <p
-            style={{
-              color: '#c49a3c',
-              letterSpacing: '0.25em',
-              textTransform: 'uppercase',
-              fontSize: '0.8rem',
-              marginBottom: '1rem',
-              fontWeight: 500,
-            }}
-          >
-            What we brew
-          </p>
-          <h2
-            ref={titleRef}
-            style={{
-              color: '#f5e6d3',
-              fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-              fontFamily: "'Playfair Display', Georgia, serif",
-              fontWeight: 700,
-              margin: 0,
-              lineHeight: 1.1,
-            }}
-          >
-            The Menu
-          </h2>
+        <div className="menu-header">
+          <p className="menu-section-label">What we brew</p>
+          <h2 ref={titleRef} className="menu-title">The Menu</h2>
         </div>
 
         {/* Carousel row: prev arrow + card + next arrow */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0',
-          }}
-        >
+        <div className="menu-carousel-row">
           {/* Prev arrow */}
           <button
             onClick={prev}
             aria-label="Previous"
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#c49a3c',
-              fontSize: '3rem',
-              cursor: 'pointer',
-              padding: '0 1.5rem',
-              opacity: 0.85,
-              lineHeight: 1,
-              flexShrink: 0,
-              transition: 'opacity 0.2s',
-            }}
+            className="menu-arrow-btn"
             onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '1' }}
             onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '0.85' }}
           >
@@ -401,43 +318,16 @@ export default function Menu() {
           </button>
 
           {/* Card perspective wrapper */}
-          <div
-            style={{
-              width: '100%',
-              maxWidth: '960px',
-              perspective: '1000px',
-              perspectiveOrigin: 'center center',
-              flexShrink: 0,
-            }}
-          >
+          <div className="menu-card-perspective">
             {/* Tilt target — GSAP rotationX/Y applied here */}
             <div
               ref={cardInnerRef}
+              className="menu-card-inner"
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
-              style={{
-                position: 'relative',
-                transformStyle: 'preserve-3d',
-                willChange: 'transform',
-                cursor: 'default',
-                display: 'flex',
-                borderRadius: '20px',
-                overflow: 'hidden',
-                background: 'rgba(25,10,3,0.88)',
-                backdropFilter: 'blur(12px)',
-                boxShadow: '0 24px 80px rgba(0,0,0,0.65)',
-                minHeight: '420px',
-              }}
             >
               {/* LEFT: Video */}
-              <div
-                style={{
-                  width: '60%',
-                  flexShrink: 0,
-                  position: 'relative',
-                  overflow: 'hidden',
-                }}
-              >
+              <div className="menu-video-wrap">
                 <video
                   ref={videoRef}
                   src={item.videoSrc}
@@ -445,119 +335,38 @@ export default function Menu() {
                   muted
                   loop
                   playsInline
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    display: 'block',
-                  }}
+                  className="menu-video"
                 />
                 {/* Right-side fade blending video into the dark panel */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'linear-gradient(to right, transparent 55%, rgba(25,10,3,0.88) 100%)',
-                    pointerEvents: 'none',
-                  }}
-                />
+                <div className="menu-video-fade" />
               </div>
 
               {/* RIGHT: Text */}
-              <div
-                style={{
-                  flex: 1,
-                  padding: '2.5rem 2rem 2.5rem 1.5rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  gap: '1.25rem',
-                }}
-              >
+              <div className="menu-card-text">
                 {/* Gold eyebrow label */}
-                <p
-                  style={{
-                    color: '#c49a3c',
-                    fontSize: '0.7rem',
-                    letterSpacing: '0.25em',
-                    textTransform: 'uppercase',
-                    margin: 0,
-                    fontWeight: 500,
-                  }}
-                >
-                  Signature Brew
-                </p>
+                <p className="menu-card-label">Signature Brew</p>
 
                 {/* Drink name */}
-                <h3
-                  style={{
-                    color: '#f5e6d3',
-                    fontFamily: "'Playfair Display', Georgia, serif",
-                    fontSize: 'clamp(1.6rem, 3vw, 2.2rem)',
-                    fontWeight: 700,
-                    margin: 0,
-                    lineHeight: 1.1,
-                  }}
-                >
-                  {item.name}
-                </h3>
+                <h3 className="menu-card-name">{item.name}</h3>
 
                 {/* Description */}
-                <p
-                  style={{
-                    color: '#c4a882',
-                    fontSize: '0.92rem',
-                    lineHeight: 1.75,
-                    margin: 0,
-                  }}
-                >
-                  {item.description}
-                </p>
+                <p className="menu-card-desc">{item.description}</p>
 
                 {/* Tag badges */}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                <div className="menu-tags">
                   {item.tags.map(tag => (
-                    <span
-                      key={tag}
-                      style={{
-                        border: '1px solid rgba(196,154,60,0.5)',
-                        color: '#c49a3c',
-                        fontSize: '0.7rem',
-                        letterSpacing: '0.1em',
-                        textTransform: 'uppercase',
-                        padding: '0.25rem 0.75rem',
-                        borderRadius: '100px',
-                      }}
-                    >
-                      {tag}
-                    </span>
+                    <span key={tag} className="menu-tag">{tag}</span>
                   ))}
                 </div>
 
                 {/* Price */}
                 {item.price && (
-                  <p style={{ margin: 0, color: '#f5e6d3', fontSize: '1.5rem', fontWeight: 700, fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '0.02em' }}>
-                    {item.price}
-                  </p>
+                  <p className="menu-card-price">{item.price}</p>
                 )}
 
                 {/* Add to Order button */}
                 <button
-                  style={{
-                    alignSelf: 'flex-start',
-                    marginTop: '0.5rem',
-                    background: '#c49a3c',
-                    color: '#1a0a00',
-                    border: 'none',
-                    padding: '0.7rem 1.75rem',
-                    borderRadius: '100px',
-                    fontWeight: 700,
-                    fontSize: '0.85rem',
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    cursor: 'pointer',
-                    transition: 'background 0.2s',
-                  }}
+                  className="menu-order-btn"
                   onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#d4aa4c' }}
                   onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#c49a3c' }}
                 >
@@ -566,18 +375,7 @@ export default function Menu() {
               </div>
 
               {/* Glossy sheen overlay */}
-              <div
-                ref={sheenRef}
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  pointerEvents: 'none',
-                  opacity: 0,
-                  transition: 'opacity 0.35s ease',
-                  mixBlendMode: 'overlay',
-                  borderRadius: '20px',
-                }}
-              />
+              <div ref={sheenRef} className="menu-sheen" />
             </div>
           </div>
 
@@ -585,18 +383,7 @@ export default function Menu() {
           <button
             onClick={next}
             aria-label="Next"
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#c49a3c',
-              fontSize: '3rem',
-              cursor: 'pointer',
-              padding: '0 1.5rem',
-              opacity: 0.85,
-              lineHeight: 1,
-              flexShrink: 0,
-              transition: 'opacity 0.2s',
-            }}
+            className="menu-arrow-btn"
             onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '1' }}
             onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '0.85' }}
           >
@@ -605,29 +392,13 @@ export default function Menu() {
         </div>
 
         {/* Dot indicators */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '8px',
-            marginTop: '1.75rem',
-          }}
-        >
+        <div className="menu-dots">
           {MENU_ITEMS.map((_, i) => (
             <button
               key={i}
               onClick={() => setActiveIdx(i)}
               aria-label={`Go to ${MENU_ITEMS[i].name}`}
-              style={{
-                width: '8px',
-                height: '8px',
-                borderRadius: '50%',
-                border: '1px solid #c49a3c',
-                background: i === activeIdx ? '#c49a3c' : 'transparent',
-                cursor: 'pointer',
-                padding: 0,
-                transition: 'background 0.25s',
-              }}
+              className={`menu-dot${i === activeIdx ? ' menu-dot--active' : ''}`}
             />
           ))}
         </div>

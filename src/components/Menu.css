@@ -1,0 +1,260 @@
+/* =====================
+   Menu Section
+   ===================== */
+
+.menu-section {
+  position: relative;
+  min-height: 100vh;
+  padding: 8rem 2rem;
+  overflow: hidden;
+  background: linear-gradient(160deg, #5c3018 0%, #3d1e0a 50%, #4a2812 100%);
+}
+
+.menu-bg-beans {
+  position: absolute;
+  inset: 0;
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.menu-smoke-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.menu-cup-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 280px;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  will-change: transform;
+  filter: drop-shadow(0 8px 24px rgba(196, 154, 60, 0.35));
+}
+
+/* =====================
+   Content Layout
+   ===================== */
+
+.menu-content {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.menu-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.menu-section-label {
+  color: #c49a3c;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.menu-title {
+  color: #f5e6d3;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.1;
+}
+
+/* =====================
+   Carousel
+   ===================== */
+
+.menu-carousel-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.menu-arrow-btn {
+  background: transparent;
+  border: none;
+  color: #c49a3c;
+  font-size: 3rem;
+  cursor: pointer;
+  padding: 0 1.5rem;
+  opacity: 0.85;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
+}
+
+/* =====================
+   Card
+   ===================== */
+
+.menu-card-perspective {
+  width: 100%;
+  max-width: 960px;
+  perspective: 1000px;
+  perspective-origin: center center;
+  flex-shrink: 0;
+}
+
+.menu-card-inner {
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform;
+  cursor: default;
+  display: flex;
+  border-radius: 20px;
+  overflow: hidden;
+  background: rgba(25, 10, 3, 0.88);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.65);
+  min-height: 420px;
+}
+
+.menu-video-wrap {
+  width: 60%;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.menu-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.menu-video-fade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, transparent 55%, rgba(25, 10, 3, 0.88) 100%);
+  pointer-events: none;
+}
+
+/* =====================
+   Card Text Panel
+   ===================== */
+
+.menu-card-text {
+  flex: 1;
+  padding: 2.5rem 2rem 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.25rem;
+}
+
+.menu-card-label {
+  color: #c49a3c;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin: 0;
+  font-weight: 500;
+}
+
+.menu-card-name {
+  color: #f5e6d3;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.menu-card-desc {
+  color: #c4a882;
+  font-size: 0.92rem;
+  line-height: 1.75;
+  margin: 0;
+}
+
+.menu-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.menu-tag {
+  border: 1px solid rgba(196, 154, 60, 0.5);
+  color: #c49a3c;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.75rem;
+  border-radius: 100px;
+}
+
+.menu-card-price {
+  margin: 0;
+  color: #f5e6d3;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: 'Playfair Display', Georgia, serif;
+  letter-spacing: 0.02em;
+}
+
+.menu-order-btn {
+  align-self: flex-start;
+  margin-top: 0.5rem;
+  background: #c49a3c;
+  color: #1a0a00;
+  border: none;
+  padding: 0.7rem 1.75rem;
+  border-radius: 100px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+/* =====================
+   Sheen & Dots
+   ===================== */
+
+.menu-sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  mix-blend-mode: overlay;
+  border-radius: 20px;
+}
+
+.menu-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 1.75rem;
+}
+
+.menu-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid #c49a3c;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.25s;
+}
+
+.menu-dot--active {
+  background: #c49a3c;
+}
