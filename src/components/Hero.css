@@ -123,3 +123,52 @@
   background: #c49a3c;
   color: #1a0f0a;
 }
+
+/* =====================
+   User Badge (logged-in)
+   ===================== */
+
+.hero-user-badge {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(25, 10, 3, 0.72);
+  border: 1px solid rgba(196, 154, 60, 0.4);
+  border-radius: 100px;
+  padding: 0.45rem 1.25rem;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  pointer-events: auto;
+}
+
+.hero-user-name {
+  color: #c49a3c;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.hero-signout-btn {
+  background: transparent;
+  border: 1px solid rgba(196, 154, 60, 0.5);
+  color: #f5e6d3;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.75rem;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.hero-signout-btn:hover {
+  background: #c49a3c;
+  color: #1a0a00;
+}

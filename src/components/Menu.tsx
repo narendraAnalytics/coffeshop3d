@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
+import { useUser, useClerk } from '@clerk/react'
 import CoffeeScene from './CoffeeScene'
 import coffeeIconSrc from '../../images/coffeeicon.png'
 import './Menu.css'
@@ -75,9 +76,18 @@ export default function Menu() {
   const rotXQ         = useRef<ReturnType<typeof gsap.quickTo> | null>(null)
   const rotYQ         = useRef<ReturnType<typeof gsap.quickTo> | null>(null)
 
+  const { isSignedIn } = useUser()
+  const { openSignIn } = useClerk()
+
   const [activeIdx, setActiveIdx] = useState(0)
   const prev = () => setActiveIdx(i => (i - 1 + MENU_ITEMS.length) % MENU_ITEMS.length)
   const next = () => setActiveIdx(i => (i + 1) % MENU_ITEMS.length)
+
+  const handleAddToOrder = () => {
+    if (!isSignedIn) {
+      openSignIn()
+    }
+  }
 
   const item = MENU_ITEMS[activeIdx]
 
@@ -367,6 +377,7 @@ export default function Menu() {
                 {/* Add to Order button */}
                 <button
                   className="menu-order-btn"
+                  onClick={handleAddToOrder}
                   onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#d4aa4c' }}
                   onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#c49a3c' }}
                 >

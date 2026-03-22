@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useUser, useClerk } from '@clerk/react'
 import './Hero.css'
 
 const FRAME_COUNT     = 300
@@ -131,6 +132,8 @@ export default function Hero() {
   const frameObj    = useRef({ frame: 0 })
   const modeRef     = useRef<'flat' | 'espresso'>('flat')
   const [activeMode, setActiveMode] = useState<'flat' | 'espresso'>('flat')
+  const { isSignedIn, user } = useUser()
+  const { signOut } = useClerk()
 
   // Audio refs
   const audioCtxRef  = useRef<AudioContext | null>(null)
@@ -498,6 +501,18 @@ export default function Hero() {
 
       {/* Bottom gradient blend into next section */}
       <div className="hero-bottom-gradient" />
+
+      {/* Logged-in user badge — bottom center */}
+      {isSignedIn && (
+        <div className="hero-user-badge">
+          <span className="hero-user-name">
+            Welcome, {user?.username ?? user?.firstName ?? 'Guest'}
+          </span>
+          <button className="hero-signout-btn" onClick={() => signOut()}>
+            Sign Out
+          </button>
+        </div>
+      )}
     </section>
   )
 }
