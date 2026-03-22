@@ -84,7 +84,8 @@ export default function OrderModal({ onClose, initialItem, allItems, user }: Pro
       setTimeout(onClose, 2200)
     } catch (e) {
       console.error(e)
-      setError('Something went wrong. Please try again.')
+      const msg = e instanceof Error ? e.message : String(e)
+      setError(`Error: ${msg}`)
     } finally {
       setSubmitting(false)
     }
