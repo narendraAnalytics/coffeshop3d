@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { useUser, UserButton } from '@clerk/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import logoSrc from '../../images/logoimage.png'
@@ -11,6 +12,7 @@ export default function Navbar() {
   const textLogoRef    = useRef<HTMLSpanElement>(null)
   const imgLogoRef     = useRef<HTMLImageElement>(null)
   const linksRef       = useRef<HTMLUListElement>(null)
+  const { isSignedIn } = useUser()
 
   useEffect(() => {
     const nav         = navRef.current
@@ -132,16 +134,23 @@ export default function Navbar() {
         />
       </a>
 
-      {/* Nav links */}
-      <ul ref={linksRef} className="navbar-links">
-        {['Menu', 'Story', 'Contact'].map((link) => (
-          <li key={link}>
-            <a href={`#${link.toLowerCase()}`} className="navbar-link">
-              {link}
-            </a>
-          </li>
-        ))}
-      </ul>
+      {/* Right side — nav links + user avatar */}
+      <div className="navbar-right">
+        <ul ref={linksRef} className="navbar-links">
+          {['Menu', 'Story', 'Contact'].map((link) => (
+            <li key={link}>
+              <a href={`#${link.toLowerCase()}`} className="navbar-link">
+                {link}
+              </a>
+            </li>
+          ))}
+        </ul>
+        {isSignedIn && (
+          <div className="navbar-user-btn">
+            <UserButton />
+          </div>
+        )}
+      </div>
     </nav>
   )
 }

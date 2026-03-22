@@ -79,3 +79,14 @@
   0%, 100% { transform: translateY(-50%); }
   50%       { transform: translateY(calc(-50% - 4px)); }
 }
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.navbar-user-btn {
+  display: flex;
+  align-items: center;
+}
