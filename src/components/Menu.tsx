@@ -3,6 +3,7 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { useUser, useClerk } from '@clerk/react'
 import CoffeeScene from './CoffeeScene'
+import OrderModal from './OrderModal'
 import coffeeIconSrc from '../../images/coffeeicon.png'
 import './Menu.css'
 
@@ -76,17 +77,18 @@ export default function Menu() {
   const rotXQ         = useRef<ReturnType<typeof gsap.quickTo> | null>(null)
   const rotYQ         = useRef<ReturnType<typeof gsap.quickTo> | null>(null)
 
-  const { isSignedIn } = useUser()
+  const { isSignedIn, user } = useUser()
   const { openSignIn } = useClerk()
 
-  const [activeIdx, setActiveIdx] = useState(0)
+  const [activeIdx,   setActiveIdx]   = useState(0)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
   const prev = () => setActiveIdx(i => (i - 1 + MENU_ITEMS.length) % MENU_ITEMS.length)
   const next = () => setActiveIdx(i => (i + 1) % MENU_ITEMS.length)
 
   const handleAddToOrder = () => {
-    if (!isSignedIn) {
-      openSignIn()
-    }
+    if (!isSignedIn) { openSignIn(); return }
+    setIsModalOpen(true)
   }
 
   const item = MENU_ITEMS[activeIdx]
@@ -415,6 +417,15 @@ export default function Menu() {
         </div>
 
       </div>
+
+      {isModalOpen && (
+        <OrderModal
+          onClose={() => setIsModalOpen(false)}
+          initialItem={item}
+          allItems={MENU_ITEMS}
+          user={user}
+        />
+      )}
     </section>
   )
 }
