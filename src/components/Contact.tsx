@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
+import orderImage from '../../images/orderimage.png'
 
 export default function Contact() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -38,7 +39,9 @@ export default function Contact() {
         justifyContent: 'center',
         textAlign: 'center',
         padding: '6rem 2rem',
-        background: 'linear-gradient(to bottom, #4a2c1a, #6b3d24)',
+        background: `linear-gradient(rgba(30, 15, 5, 0.65), rgba(30, 15, 5, 0.75)), url(${orderImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
       }}
     >
       <div className="contact-content">
