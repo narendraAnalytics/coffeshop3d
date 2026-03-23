@@ -1,0 +1,97 @@
+/* =====================
+   Contact Section
+   ===================== */
+
+.contact-section {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 6rem 2rem;
+  background: linear-gradient(rgba(30, 15, 5, 0.65), rgba(30, 15, 5, 0.75)), url('/images/orderimage.png');
+  background-size: cover;
+  background-position: center;
+}
+
+.contact-label {
+  color: #c49a3c;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.contact-heading {
+  color: #f5e6d3;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  margin: 0 0 1.5rem;
+  line-height: 1.2;
+}
+
+.contact-heading-accent {
+  color: #c4622d;
+  font-style: italic;
+}
+
+.contact-description {
+  color: #e8d5b7;
+  opacity: 0.75;
+  max-width: 500px;
+  line-height: 1.7;
+  margin-bottom: 3rem;
+  font-size: 1rem;
+}
+
+.contact-btn-row {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.contact-btn-primary {
+  display: inline-block;
+  padding: 0.875rem 2.5rem;
+  background: #c4622d;
+  color: #f5e6d3;
+  text-decoration: none;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  transition: opacity 0.3s ease;
+  font-weight: 500;
+}
+
+.contact-btn-primary:hover {
+  opacity: 0.8;
+}
+
+.contact-btn-outline {
+  display: inline-block;
+  padding: 0.875rem 2.5rem;
+  border: 1px solid rgba(196, 154, 60, 0.5);
+  color: #c49a3c;
+  text-decoration: none;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  transition: border-color 0.3s ease;
+  font-weight: 500;
+}
+
+.contact-btn-outline:hover {
+  border-color: rgba(196, 154, 60, 0.9);
+}
+
+.contact-footer {
+  margin-top: 6rem;
+  color: #e8d5b7;
+  opacity: 0.3;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+}
