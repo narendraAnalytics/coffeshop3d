@@ -1,0 +1,84 @@
+/* ── Root container ── */
+.intro-container {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #1a0f0a;
+  overflow: hidden;
+}
+
+/* ── Background video ── */
+.intro-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+/* ── Vignette gradient ── */
+.intro-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(26, 15, 10, 0.55) 0%,
+    transparent 30%,
+    transparent 60%,
+    rgba(26, 15, 10, 0.75) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Centered text + button overlay ── */
+.intro-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  text-align: center;
+  padding: 2rem 2rem 4rem;
+  opacity: 0;
+  pointer-events: auto;
+}
+
+/* ── Welcome button ── */
+.intro-btn {
+  display: inline-block;
+  padding: 1rem 3rem;
+  border: 1px solid #c49a3c;
+  background: transparent;
+  color: #c49a3c;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease, opacity 0.3s ease;
+}
+
+.intro-btn:hover:not(:disabled) {
+  background: #c49a3c;
+  color: #1a0f0a;
+}
+
+.intro-btn--exiting,
+.intro-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Mobile ── */
+@media (max-width: 480px) {
+  .intro-btn {
+    padding: 0.875rem 2rem;
+  }
+}
