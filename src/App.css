@@ -1,1 +1,4 @@
-/* Cleared — all styles live in index.css and component inline styles */
+.app-main {
+  background: #1a0f0a;
+  overflow-x: hidden;
+}

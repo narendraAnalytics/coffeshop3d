@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import './App.css'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Menu from './components/Menu'
@@ -16,7 +17,7 @@ function App() {
       {showIntro && (
         <IntroScreen onComplete={() => setShowIntro(false)} />
       )}
-      <main style={{ background: '#1a0f0a', overflowX: 'hidden' }}>
+      <main className="app-main">
         <Navbar />
         <Hero />
         <Menu />
