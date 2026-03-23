@@ -38,7 +38,7 @@ export default function Contact() {
         justifyContent: 'center',
         textAlign: 'center',
         padding: '6rem 2rem',
-        background: 'linear-gradient(to bottom, #1a0f0a, #2d1a10)',
+        background: 'linear-gradient(to bottom, #4a2c1a, #6b3d24)',
       }}
     >
       <div className="contact-content">
