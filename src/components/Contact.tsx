@@ -79,7 +79,7 @@ export default function Contact() {
             fontSize: '1rem',
           }}
         >
-          123 Morning Lane, The City<br />
+          Amaravathi,Andhra Pradesh<br />
           Mon–Fri: 7am – 6pm · Sat–Sun: 8am – 5pm
         </p>
 
@@ -92,7 +92,7 @@ export default function Contact() {
           }}
         >
           <a
-            href="mailto:hello@sunrisebrew.com"
+            href="mailto:narendra.insights@gmail.com"
             style={{
               display: 'inline-block',
               padding: '0.875rem 2.5rem',
@@ -129,6 +129,27 @@ export default function Contact() {
           >
             View Menu
           </a>
+          <a
+            href="https://www.linkedin.com/in/nk-analytics"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-block',
+              padding: '0.875rem 2.5rem',
+              border: '1px solid rgba(196, 154, 60, 0.5)',
+              color: '#c49a3c',
+              textDecoration: 'none',
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              fontSize: '0.75rem',
+              transition: 'border-color 0.3s ease',
+              fontWeight: 500,
+            }}
+            onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(196, 154, 60, 0.9)')}
+            onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(196, 154, 60, 0.5)')}
+          >
+            LinkedIn
+          </a>
         </div>
       </div>
 
@@ -141,7 +162,7 @@ export default function Contact() {
           letterSpacing: '0.1em',
         }}
       >
-        © 2025 Sunrise Brew House
+        © 2026 Sunrise Brew House
       </div>
     </section>
   )
