@@ -4,6 +4,10 @@ import gsap from 'gsap'
 import { useUser, useClerk } from '@clerk/react'
 import CoffeeScene from './CoffeeScene'
 import OrderModal from './OrderModal'
+import OrderHistoryModal from './OrderHistoryModal'
+import { getDb } from '../db'
+import { orders } from '../schema'
+import { eq } from 'drizzle-orm'
 import coffeeIconSrc from '../../images/coffeeicon.png'
 import './Menu.css'
 
@@ -80,8 +84,10 @@ export default function Menu() {
   const { isSignedIn, user } = useUser()
   const { openSignIn } = useClerk()
 
-  const [activeIdx,   setActiveIdx]   = useState(0)
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [activeIdx,    setActiveIdx]    = useState(0)
+  const [isModalOpen,  setIsModalOpen]  = useState(false)
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false)
+  const [hasPastOrders, setHasPastOrders] = useState(false)
 
   const prev = () => setActiveIdx(i => (i - 1 + MENU_ITEMS.length) % MENU_ITEMS.length)
   const next = () => setActiveIdx(i => (i + 1) % MENU_ITEMS.length)
@@ -90,6 +96,21 @@ export default function Menu() {
     if (!isSignedIn) { openSignIn(); return }
     setIsModalOpen(true)
   }
+
+  const refreshOrderCheck = () => {
+    if (!isSignedIn || !user) return
+    getDb()
+      .select({ id: orders.id })
+      .from(orders)
+      .where(eq(orders.clerkUserId, user.id))
+      .limit(1)
+      .then(rows => setHasPastOrders(rows.length > 0))
+      .catch(() => {})
+  }
+
+  useEffect(() => {
+    refreshOrderCheck()
+  }, [isSignedIn, user])
 
   const item = MENU_ITEMS[activeIdx]
 
@@ -376,15 +397,26 @@ export default function Menu() {
                   <p className="menu-card-price">{item.price}</p>
                 )}
 
-                {/* Add to Order button */}
-                <button
-                  className="menu-order-btn"
-                  onClick={handleAddToOrder}
-                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#d4aa4c' }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#c49a3c' }}
-                >
-                  Add to Order
-                </button>
+                {/* Buttons row */}
+                <div className="menu-btn-row">
+                  <button
+                    className="menu-order-btn"
+                    onClick={handleAddToOrder}
+                    onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#d4aa4c' }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#c49a3c' }}
+                  >
+                    Add to Order
+                  </button>
+
+                  {isSignedIn && hasPastOrders && (
+                    <button
+                      className="menu-history-btn"
+                      onClick={() => setIsHistoryOpen(true)}
+                    >
+                      View My Orders
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Glossy sheen overlay */}
@@ -420,10 +452,17 @@ export default function Menu() {
 
       {isModalOpen && (
         <OrderModal
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => { setIsModalOpen(false); refreshOrderCheck() }}
           initialItem={item}
           allItems={MENU_ITEMS}
           user={user}
+        />
+      )}
+
+      {isHistoryOpen && user && (
+        <OrderHistoryModal
+          onClose={() => setIsHistoryOpen(false)}
+          userId={user.id}
         />
       )}
     </section>
