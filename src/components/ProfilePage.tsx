@@ -13,6 +13,7 @@ interface Project {
   infographic: string
   video?: string
   demo?: string
+  stack?: string[]
 }
 
 const PROJECTS: Project[] = [
@@ -22,6 +23,7 @@ const PROJECTS: Project[] = [
     infographic: '/profile/infographics/ProfessionalPhotoShoot.png',
     video: '/profile/videos/ProfessionalPhotoShoot.mp4',
     demo: 'https://professional-life-style-shoot.vercel.app/',
+    stack: ['React', 'Clerk', 'Gemini AI', 'ImageKit', 'Tailwind CSS', 'Prisma'],
   },
   {
     id: 'thumbl',
@@ -29,6 +31,7 @@ const PROJECTS: Project[] = [
     infographic: '/profile/infographics/thumblinfographic.png',
     video : 'profile/videos/thumblvideo.mp4',
     demo : 'https://thumbl-phi.vercel.app/',
+    stack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Clerk', 'Gemini 3 Pro', 'Lucide React', 'Drizzle', 'Neon', 'ImageKit'],
   },
   {
     id: 'quickspot',
@@ -36,6 +39,7 @@ const PROJECTS: Project[] = [
     infographic: '/profile/infographics/QuickBook.png',
     video : 'profile/videos/quickspotvideo.mp4',
     demo : 'https://quickspot-nine.vercel.app/',
+    stack: ['Next.js', 'Tailwind CSS', 'Google Gemini API', 'Clerk', 'Vercel', 'TypeScript'],
   },
   {
     id: 'india-trade',
@@ -255,6 +259,24 @@ function InfographicLightbox({ src, onClose }: { src: string; onClose: () => voi
   )
 }
 
+// ─── Tech stack color map ──────────────────────────────────────────────────────
+const STACK_COLORS: Record<string, { bg: string; color: string }> = {
+  'React':           { bg: 'rgba(97,218,251,0.18)',  color: '#61DAFB' },
+  'Clerk':           { bg: 'rgba(108,71,255,0.18)',  color: '#a78fff' },
+  'Gemini AI':       { bg: 'rgba(52,168,83,0.18)',   color: '#4eca77' },
+  'ImageKit':        { bg: 'rgba(255,107,53,0.18)',  color: '#ff8c66' },
+  'Tailwind CSS':    { bg: 'rgba(6,182,212,0.18)',   color: '#22d3ee' },
+  'Prisma':          { bg: 'rgba(90,103,216,0.18)',  color: '#818cf8' },
+  'Next.js':         { bg: 'rgba(255,255,255,0.12)', color: '#e2e8f0' },
+  'Lucide React':    { bg: 'rgba(251,191,36,0.18)',  color: '#fbbf24' },
+  'Gemini 3 Pro':    { bg: 'rgba(66,133,244,0.18)',  color: '#7baaf7' },
+  'TypeScript':      { bg: 'rgba(49,120,198,0.18)',  color: '#60a5fa' },
+  'Drizzle':         { bg: 'rgba(163,230,53,0.18)',  color: '#a3e635' },
+  'Neon':            { bg: 'rgba(20,184,166,0.18)',  color: '#2dd4bf' },
+  'Google Gemini API': { bg: 'rgba(66,133,244,0.18)',  color: '#89b4fa' },
+  'Vercel':            { bg: 'rgba(255,255,255,0.10)', color: '#cbd5e1' },
+}
+
 // ─── Project Card ─────────────────────────────────────────────────────────────
 
 function ProjectCard({
@@ -322,6 +344,22 @@ function ProjectCard({
 
       <div className="pp-card-info">
         <h3 className="pp-card-title">{project.title}</h3>
+        {project.stack && project.stack.length > 0 && (
+          <div className="pp-card-stack">
+            {project.stack.map((tech) => {
+              const c = STACK_COLORS[tech] ?? { bg: 'rgba(196,154,60,0.18)', color: '#c49a3c' }
+              return (
+                <span
+                  key={tech}
+                  className="pp-stack-badge"
+                  style={{ background: c.bg, color: c.color, borderColor: c.color }}
+                >
+                  {tech}
+                </span>
+              )
+            })}
+          </div>
+        )}
         <div className="pp-card-actions">
           {project.demo && (
             <a

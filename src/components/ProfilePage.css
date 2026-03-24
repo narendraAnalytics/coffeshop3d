@@ -370,6 +370,26 @@
   text-overflow: ellipsis;
 }
 
+/* ─── Tech stack badges ──────────────────────────────────────────────────── */
+.pp-card-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+  justify-content: center;
+}
+
+.pp-stack-badge {
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+
 .pp-card-actions {
   display: flex;
   gap: 0.6rem;
