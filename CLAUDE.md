@@ -28,7 +28,7 @@ Two `.env` files are required (never committed):
 
 ## Architecture
 
-Single-page React 19 + TypeScript app bundled with Vite. `App.tsx` renders five sections vertically: `Navbar → Hero → Menu → About → Contact`. All animation is GSAP-based; Three.js (via React Three Fiber) is used only in the Menu background.
+Single-page React 19 + TypeScript app bundled with Vite. `App.tsx` renders five sections vertically (`Navbar → Hero → Menu → About → Contact`) and conditionally mounts a `<ProfilePage />` overlay (triggered by the Navbar "Portfolio" button, controlled by `showProfile` state). All animation is GSAP-based; Three.js (via React Three Fiber) is used in the Menu background (`CoffeeScene`) and the ProfilePage background (`ProfileScene`).
 
 ### Authentication — Clerk
 `main.tsx` wraps the app in `<ClerkProvider>`. Menu uses `useUser()` and `useClerk()` to gate ordering behind sign-in. The signed-in user's `user.id` (Clerk user ID) is stored in every order row as `clerk_user_id`.
@@ -58,12 +58,22 @@ The most complex component. Key design decisions:
 ### Navbar (`Navbar.tsx` + `Navbar.css`)
 GSAP ScrollTrigger at `start: 'top -80'` flips the text logo out (Y-axis rotation) and fades in the image logo, which then spins continuously via `requestAnimationFrame`. Links fade to 35% opacity on scroll.
 
+### ProfilePage (`ProfilePage.tsx` + `ProfilePage.css`)
+Full-screen fixed overlay (`z-index: 100`, CSS prefix `pp-`) that sweeps in via GSAP `clipPath: inset(0 100% 0 0)` reveal. Key details:
+
+- **Opening/closing**: `App.tsx` `showProfile` state → `Navbar` `onProfileOpen` prop. `document.body.style.overflow = 'hidden'` is set on mount and restored in `useEffect` cleanup — this prevents `Hero` ScrollTrigger from advancing in the background.
+- **3D background**: `ProfileScene` — 35 floating Torus + Octahedron meshes (`@react-three/drei` `Float`), seeded PRNG with `seed=137` (distinct from `CoffeeScene`'s `seed=42`). Gold metallic `MeshStandardMaterial`.
+- **Carousel**: single-project view. `navigate(newIndex, direction)` animates the current `.pp-stage-card` out (`x: ±320, opacity:0`), calls `setCurrentIndex` in `onComplete`, then a `useEffect([currentIndex])` animates the new card in. `isAnimatingRef` gates against double-click.
+- **Adding projects**: edit the `PROJECTS` array at the top of `ProfilePage.tsx`. Add `video` (path string) to show "▶ Play" button; add `demo` (URL) to show "View Live →" button. Assets live in `profile/infographics/` and `profile/videos/`.
+- **GSAP transform rules**: no CSS `transform` on `.pp-card` (GSAP owns `rotationX/Y + transformPerspective`) or `.pp-stage-card` (GSAP owns `x/opacity`). CSS `transform` is allowed on `::after` pseudo-elements (e.g., the "Click for Full View" tooltip uses `translateX(-50%)`).
+- **Lightboxes**: `VideoLightbox` and `InfographicLightbox` are separate components that both reuse the `.pp-lightbox` backdrop. Click-outside closes via `onClick` on backdrop + `e.stopPropagation()` on inner container.
+
 ### Menu (`Menu.tsx` + `Menu.css`)
 Uses `useGSAP` hook with `{ scope: sectionRef }` (not plain `useEffect`) for scoped ScrollTrigger animations. Background is a Three.js scene (`CoffeeScene`) rendered into an absolutely-positioned Canvas with 25 floating coffee beans using a seeded PRNG for deterministic layout. The card uses GSAP `quickTo` on `rotationX/Y` for 3D mouse-tilt; never add CSS `transform` to `cardInnerRef`. Both order buttons live in `.menu-btn-row` (flex row, `nowrap`).
 
 ### Styling conventions
 - **Tailwind CSS v4** — configured via `@theme` block in `src/index.css` (no `tailwind.config.js`). Custom tokens: `espresso`, `cream`, `beige`, `terracotta`, `gold`, `dark-warm`.
-- **Component CSS files** — every component that has GSAP-animated elements has a companion `.css` file (`Navbar.css`, `Hero.css`, `Menu.css`, `OrderModal.css`, `OrderHistoryModal.css`). Classes follow flat BEM-style naming.
+- **Component CSS files** — every component that has GSAP-animated elements has a companion `.css` file (`Navbar.css`, `Hero.css`, `Menu.css`, `OrderModal.css`, `OrderHistoryModal.css`, `ProfilePage.css`). Classes follow flat BEM-style naming with a component prefix (`om-`, `ohm-`, `pp-`, etc.).
 - **Inline styles** — still used in About and Contact only.
 
 ### Static assets
@@ -71,3 +81,5 @@ Uses `useGSAP` hook with `{ scope: sectionRef }` (not plain `useEffect`) for sco
 - `images/` (project root) — logo and icon images, imported directly via ES module imports in Navbar
 - `public/images/` — runtime images referenced by path string (e.g. sidebanner)
 - `public/videos/` — per-coffee MP4 clips used in the Menu carousel
+- `profile/infographics/` — PNG infographic images for portfolio projects (served at `/profile/infographics/...`)
+- `profile/videos/` — MP4 demo videos for portfolio projects (served at `/profile/videos/...`)

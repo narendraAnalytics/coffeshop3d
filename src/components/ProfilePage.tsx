@@ -24,60 +24,71 @@ const PROJECTS: Project[] = [
     demo: 'https://professional-life-style-shoot.vercel.app/',
   },
   {
-    id: 'content-ai',
-    title: 'Content AI Generation',
-    infographic: '/profile/infographics/contentaigeneration.png',
+    id: 'thumbl',
+    title: 'Thumbl',
+    infographic: '/profile/infographics/thumblinfographic.png',
+    video : 'profile/videos/thumblvideo.mp4',
+    demo : 'https://thumbl-phi.vercel.app/',
+  },
+  {
+    id: 'quickspot',
+    title: 'Quickspot',
+    infographic: '/profile/infographics/QuickBook.png',
+    video : 'profile/videos/quickspotvideo.mp4',
+    demo : 'https://quickspot-nine.vercel.app/',
   },
   {
     id: 'india-trade',
     title: 'India Trade Analysis',
     infographic: '/profile/infographics/IndiaTradeAnalysis.png',
-  },
-  {
-    id: 'professional-ai-agent',
-    title: 'Professional AI Agent',
-    infographic: '/profile/infographics/ProfessionalAIAgent.png',
-  },
-  {
-    id: 'quickbook',
-    title: 'QuickBook',
-    infographic: '/profile/infographics/QuickBook.png',
-  },
-  {
-    id: 'quiclspot',
-    title: 'Quiclspot',
-    infographic: '/profile/infographics/QuiclspotInfographic.png',
-  },
-  {
-    id: 'read-with-me',
-    title: 'Read With Me',
-    infographic: '/profile/infographics/ReadWithME.png',
-  },
-  {
-    id: 'real-estate',
-    title: 'Real Estate Investment',
-    infographic: '/profile/infographics/Real Estate Investment.png',
-  },
-  {
-    id: 'skinveda',
-    title: 'Skinveda',
-    infographic: '/profile/infographics/skinvedainfographic.png',
-  },
-  {
-    id: 'snapcook',
-    title: 'Snap Cook',
-    infographic: '/profile/infographics/snapcook.png',
+    video :'/profile/videos/IndiaTradeAnalysisVideo.mp4',
+    demo : 'https://tradeanalysis-azure.vercel.app/',
   },
   {
     id: 'stepwise',
     title: 'Stepwise',
     infographic: '/profile/infographics/stepwise.png',
+    video : 'profile/videos/stepwisevideo.mp4',
+    demo : 'https://stepwise-gules.vercel.app/',
+
   },
   {
-    id: 'thumbl',
-    title: 'Thumbl',
-    infographic: '/profile/infographics/thumblinfographic.png',
+    id: 'professional-ai-agent',
+    title: 'Professional AI Agent',
+    infographic: '/profile/infographics/ProfessionalAIAgent.png',
+    video : 'profile/videos/aiagentvideo.mp4',
+    demo : 'https://aiagent-ten-nu.vercel.app/',
   },
+  
+  {
+    id: 'real-estate',
+    title: 'Real Estate Investment',
+    infographic: '/profile/infographics/Real Estate Investment.png',
+    video : 'profile/videos/EstateVideo.mp4',
+    demo : 'https://estate-ai-india.vercel.app/',
+  },
+  {
+    id: 'snapcook',
+    title: 'Snap Cook',
+    infographic: '/profile/infographics/snapcook.png',
+    video : 'profile/videos/snapcookvideo.mp4',
+    demo : 'https://snapcook-psi.vercel.app/',
+  },
+  {
+    id: 'content-ai',
+    title: 'Content AI Generation',
+    infographic: '/profile/infographics/contentaigeneration.png',
+    demo : 'https://cotentaigeneration.vercel.app/',
+  },
+  
+  {
+    id: 'skinveda',
+    title: 'Skinveda',
+    infographic: '/profile/infographics/skinvedainfographic.png',
+    video : 'profile/videos/skinveda.mp4',
+  },
+  
+  
 ]
 
 // ─── 3D Background ─────────────────────────────────────────────────────────────
