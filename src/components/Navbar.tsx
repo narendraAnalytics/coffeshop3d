@@ -6,7 +6,11 @@ import logoSrc from '../../images/logoimage.png'
 import coffeeIconSrc from '../../images/coffeeicon.png'
 import './Navbar.css'
 
-export default function Navbar() {
+interface NavbarProps {
+  onProfileOpen: () => void
+}
+
+export default function Navbar({ onProfileOpen }: NavbarProps) {
   const navRef         = useRef<HTMLElement>(null)
   const logoWrapperRef = useRef<HTMLAnchorElement>(null)
   const textLogoRef    = useRef<HTMLSpanElement>(null)
@@ -145,6 +149,27 @@ export default function Navbar() {
             </li>
           ))}
         </ul>
+        <button
+          className="navbar-portfolio-btn"
+          onClick={onProfileOpen}
+          aria-label="Open portfolio"
+        >
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <rect x="2" y="7" width="20" height="14" rx="2" />
+            <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+          </svg>
+          Portfolio
+        </button>
         {isSignedIn && (
           <div className="navbar-user-btn">
             <UserButton />
