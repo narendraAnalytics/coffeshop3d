@@ -488,6 +488,17 @@ export default function ProfilePage({ onClose }: ProfilePageProps) {
         {/* Warm gradient for text readability */}
         <div className="pp-gradient" />
 
+        {/* Profile video — top-left ring */}
+        <video
+          className="pp-profile-video"
+          src="/profile/profilepic.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          onClick={() => setVideoSrc('/profile/profilepic.mp4')}
+        />
+
         {/* Close button */}
         <button className="pp-close" onClick={handleClose} aria-label="Close portfolio">
           ×

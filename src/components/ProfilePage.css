@@ -55,6 +55,21 @@
   color: #d4aa4c;
 }
 
+/* ─── Profile Video (top-left ring) ──────────────────────────────────────── */
+.pp-profile-video {
+  position: absolute;
+  top: 1.4rem;
+  left: 1.5rem;
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(196,154,60,0.65);
+  box-shadow: 0 0 12px rgba(196,154,60,0.25);
+  z-index: 10;
+  cursor: pointer;
+}
+
 /* ─── Full-height stage wrap (no scroll) ───────────────────────────────────── */
 .pp-stage-wrap {
   position: absolute;
