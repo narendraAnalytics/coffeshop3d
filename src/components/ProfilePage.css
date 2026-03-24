@@ -3,25 +3,26 @@
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: #1a1208;
+  background: #3d2410;
   overflow: hidden;
   /* Initial state: clipped fully to the right — GSAP animates this open */
   clip-path: inset(0 100% 0 0);
 }
 
-/* ─── Dark gradient for text readability over the 3D scene ─────────────────── */
+/* ─── Warm gradient for text readability over the 3D scene ─────────────────── */
 .pp-gradient {
   position: absolute;
   inset: 0;
   z-index: 1;
   background:
-    radial-gradient(ellipse 80% 60% at 20% 15%, rgba(196,154,60,0.07) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 80% 85%, rgba(196,154,60,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 55% at 15% 10%, rgba(220,170,80,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 85% 90%, rgba(196,130,50,0.14) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(200,140,60,0.08) 0%, transparent 70%),
     linear-gradient(180deg,
-      rgba(26,18,8,0.88) 0%,
-      rgba(26,18,8,0.62) 40%,
-      rgba(26,18,8,0.62) 60%,
-      rgba(26,18,8,0.88) 100%
+      rgba(40,22,8,0.55) 0%,
+      rgba(40,22,8,0.28) 40%,
+      rgba(40,22,8,0.28) 60%,
+      rgba(40,22,8,0.55) 100%
     );
   pointer-events: none;
 }
@@ -54,36 +55,28 @@
   color: #d4aa4c;
 }
 
-/* ─── Scrollable area ───────────────────────────────────────────────────────── */
-.pp-scroll-area {
+/* ─── Full-height stage wrap (no scroll) ───────────────────────────────────── */
+.pp-stage-wrap {
   position: absolute;
   inset: 0;
   z-index: 2;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 4.5rem 3rem 5rem;
-}
-
-.pp-scroll-area::-webkit-scrollbar {
-  width: 3px;
-}
-.pp-scroll-area::-webkit-scrollbar-track {
-  background: transparent;
-}
-.pp-scroll-area::-webkit-scrollbar-thumb {
-  background: rgba(196,154,60,0.4);
-  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  padding: 3rem 2.5rem 1rem;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* ─── Header ────────────────────────────────────────────────────────────────── */
 .pp-header {
   text-align: center;
-  padding-bottom: 4rem;
+  padding-bottom: 0.5rem;
+  flex-shrink: 0;
 }
 
 .pp-title {
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(3.2rem, 9vw, 7.5rem);
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
   font-weight: 300;
   color: #f5e6d3;
   letter-spacing: 0.35em;
@@ -130,38 +123,107 @@
   transform-origin: left center;
 }
 
-/* ─── Project Grid ──────────────────────────────────────────────────────────── */
-.pp-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.6rem;
-  max-width: 1200px;
-  margin: 0 auto;
+/* ─── Stage (arrows + card) ─────────────────────────────────────────────────── */
+.pp-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 0;
 }
 
-@media (max-width: 1024px) {
-  .pp-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+/* Animated card container — GSAP manages x + opacity, no CSS transform here */
+.pp-stage-card {
+  flex: 1;
+  height: 100%;
+  min-height: 0;
+  will-change: transform, opacity;
+}
+
+/* Prev / Next arrow buttons */
+.pp-arrow {
+  flex-shrink: 0;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  border: 1px solid rgba(196,154,60,0.4);
+  background: rgba(40,22,8,0.55);
+  color: #c49a3c;
+  font-size: 1.7rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.pp-arrow:hover {
+  background: rgba(196,154,60,0.18);
+  border-color: #c49a3c;
+  color: #d4aa4c;
+}
+
+/* ─── Bottom navigation ─────────────────────────────────────────────────────── */
+.pp-nav {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 0 0.25rem;
+}
+
+.pp-counter {
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  color: #a08060;
+  text-transform: uppercase;
+}
+
+.pp-dots {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 300px;
+}
+
+.pp-dot-btn {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(196,154,60,0.3);
+  cursor: pointer;
+  padding: 0;
+  /* No CSS transform on inactive — GSAP not used here, scale via CSS only */
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.pp-dot-btn--active {
+  background: #c49a3c;
+  transform: scale(1.45);
+}
+
+.pp-dot-btn:hover:not(.pp-dot-btn--active) {
+  background: rgba(196,154,60,0.6);
 }
 
 @media (max-width: 640px) {
-  .pp-grid {
-    grid-template-columns: 1fr;
-    gap: 1.2rem;
+  .pp-stage-wrap {
+    padding: 4rem 0.75rem 1rem;
   }
-  .pp-scroll-area {
-    padding: 4rem 1.2rem 4rem;
+  .pp-arrow {
+    width: 2.4rem;
+    height: 2.4rem;
+    font-size: 1.4rem;
   }
   .pp-title {
     letter-spacing: 0.18em;
   }
-}
-
-/* ─── Card wrapper (GSAP stagger entry target) ──────────────────────────────── */
-.pp-card-wrapper {
-  /* No CSS transform — GSAP animates y + opacity on entry, then clearProps removes them */
-  will-change: opacity;
 }
 
 /* ─── Project Card ──────────────────────────────────────────────────────────── */
@@ -169,12 +231,12 @@
   position: relative;
   border-radius: 12px;
   overflow: hidden;
-  background: rgba(26, 18, 8, 0.78);
+  background: rgba(50, 30, 10, 0.68);
   border: 1px solid rgba(196,154,60,0.2);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   cursor: pointer;
-  height: 390px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   /* No CSS transform — GSAP manages rotationX/Y + transformPerspective */
@@ -190,10 +252,39 @@
 .pp-card-img-wrap {
   flex: 1;
   overflow: hidden;
-  background: rgba(10, 6, 2, 0.35);
+  background: rgba(20, 12, 4, 0.22);
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.pp-card-img-wrap::after {
+  content: 'Click for Full View';
+  position: absolute;
+  bottom: 0.85rem;
+  left: 50%;
+  /* CSS transform on pseudo-element — no GSAP conflict with parent .pp-card */
+  transform: translateX(-50%);
+  background: rgba(20, 12, 4, 0.88);
+  color: #c49a3c;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.38rem 0.9rem;
+  border-radius: 4px;
+  border: 1px solid rgba(196,154,60,0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.pp-card-img-wrap:hover::after {
+  opacity: 1;
 }
 
 .pp-card-img {
@@ -213,7 +304,7 @@
 .pp-card-info {
   padding: 0.9rem 1.1rem 1rem;
   flex-shrink: 0;
-  background: linear-gradient(to top, rgba(20,12,4,0.96) 0%, rgba(26,18,8,0.82) 100%);
+  background: linear-gradient(to top, rgba(38,22,8,0.94) 0%, rgba(50,30,10,0.75) 100%);
   border-top: 1px solid rgba(196,154,60,0.1);
 }
 
@@ -349,4 +440,27 @@
   display: block;
   background: #000;
   max-height: 80vh;
+}
+
+/* ─── Infographic fullscreen viewer ────────────────────────────────────────── */
+.pp-inf-inner {
+  position: relative;
+  max-width: 92vw;
+  max-height: 92vh;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(196,154,60,0.18), 0 25px 100px rgba(0,0,0,0.8);
+  /* No CSS transform — GSAP manages scale + opacity on entry */
+  will-change: transform, opacity;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pp-inf-img {
+  display: block;
+  max-width: 92vw;
+  max-height: 92vh;
+  object-fit: contain;
+  border-radius: 6px;
 }

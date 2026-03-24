@@ -204,14 +204,56 @@ function VideoLightbox({ src, onClose }: { src: string; onClose: () => void }) {
   )
 }
 
+// ─── Infographic Lightbox ────────────────────────────────────────────────────
+
+function InfographicLightbox({ src, onClose }: { src: string; onClose: () => void }) {
+  const backdropRef = useRef<HTMLDivElement>(null)
+  const innerRef    = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    gsap.fromTo(
+      backdropRef.current,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.3, ease: 'power2.out' }
+    )
+    gsap.fromTo(
+      innerRef.current,
+      { opacity: 0, scale: 0.82 },
+      { opacity: 1, scale: 1, duration: 0.38, ease: 'back.out(1.5)' }
+    )
+  }, [])
+
+  const handleClose = () => {
+    gsap.to(backdropRef.current, {
+      opacity: 0,
+      duration: 0.25,
+      ease: 'power2.in',
+      onComplete: onClose,
+    })
+  }
+
+  return (
+    <div ref={backdropRef} className="pp-lightbox" onClick={handleClose}>
+      <div ref={innerRef} className="pp-inf-inner" onClick={e => e.stopPropagation()}>
+        <button className="pp-lightbox-close" onClick={handleClose} aria-label="Close image">
+          ×
+        </button>
+        <img src={src} alt="Project infographic" className="pp-inf-img" />
+      </div>
+    </div>
+  )
+}
+
 // ─── Project Card ─────────────────────────────────────────────────────────────
 
 function ProjectCard({
   project,
   onVideoClick,
+  onInfographicClick,
 }: {
   project: Project
   onVideoClick: (src: string) => void
+  onInfographicClick: (src: string) => void
 }) {
   const cardRef  = useRef<HTMLDivElement>(null)
   const sheenRef = useRef<HTMLDivElement>(null)
@@ -255,7 +297,10 @@ function ProjectCard({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="pp-card-img-wrap">
+      <div
+        className="pp-card-img-wrap"
+        onClick={() => onInfographicClick(project.infographic)}
+      >
         <img
           src={project.infographic}
           alt={project.title}
@@ -300,17 +345,26 @@ interface ProfilePageProps {
 }
 
 const TITLE_CHARS = 'MY WORK'.split('')
+const N = PROJECTS.length
 
 export default function ProfilePage({ onClose }: ProfilePageProps) {
-  const overlayRef      = useRef<HTMLDivElement>(null)
-  const lettersRef      = useRef<HTMLSpanElement[]>([])
-  const subtitleRef     = useRef<HTMLParagraphElement>(null)
-  const underlineRef    = useRef<HTMLDivElement>(null)
-  const cardWrappersRef = useRef<HTMLDivElement[]>([])
-  const [videoSrc, setVideoSrc] = useState<string | null>(null)
+  const overlayRef     = useRef<HTMLDivElement>(null)
+  const lettersRef     = useRef<HTMLSpanElement[]>([])
+  const subtitleRef    = useRef<HTMLParagraphElement>(null)
+  const underlineRef   = useRef<HTMLDivElement>(null)
+  const stageCardRef   = useRef<HTMLDivElement>(null)
+  const isAnimatingRef = useRef(false)
+  const directionRef   = useRef<1 | -1>(1)
+
+  const [currentIndex, setCurrentIndex]       = useState(0)
+  const [videoSrc, setVideoSrc]               = useState<string | null>(null)
+  const [infographicSrc, setInfographicSrc]   = useState<string | null>(null)
 
   // Entry animation timeline
   useEffect(() => {
+    // Lock body scroll so Hero ScrollTrigger doesn't fire in the background
+    document.body.style.overflow = 'hidden'
+
     const tl = gsap.timeline()
 
     // 1. Overlay sweeps in from the right via clip-path
@@ -344,23 +398,58 @@ export default function ProfilePage({ onClose }: ProfilePageProps) {
       '-=0.2'
     )
 
-    // 5. Cards stagger up from below
+    // 5. Stage card slides in from right on first open
     .fromTo(
-      cardWrappersRef.current.filter(Boolean),
-      { y: 80, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        stagger: 0.065,
-        duration: 0.65,
-        ease: 'power3.out',
-        clearProps: 'transform',
-      },
+      stageCardRef.current,
+      { x: 280, opacity: 0 },
+      { x: 0, opacity: 1, duration: 0.55, ease: 'power3.out' },
       '-=0.1'
     )
 
-    return () => { tl.kill() }
+    return () => {
+      document.body.style.overflow = ''   // restore scroll on unmount
+      tl.kill()
+    }
   }, [])
+
+  // Animate new card in after state update (skip on initial mount)
+  useEffect(() => {
+    if (!isAnimatingRef.current) return
+    gsap.to(stageCardRef.current, {
+      x: 0,
+      opacity: 1,
+      duration: 0.4,
+      ease: 'power2.out',
+      onComplete: () => { isAnimatingRef.current = false },
+    })
+  }, [currentIndex])
+
+  // Navigate to a new project index with slide animation
+  const navigate = (newIndex: number, direction: 1 | -1) => {
+    if (isAnimatingRef.current) return
+    isAnimatingRef.current = true
+    directionRef.current   = direction
+    const card = stageCardRef.current
+    if (!card) return
+
+    gsap.to(card, {
+      x: direction * -320,
+      opacity: 0,
+      duration: 0.32,
+      ease: 'power2.in',
+      onComplete: () => {
+        gsap.set(card, { x: direction * 320 })  // position for entry
+        setCurrentIndex(newIndex)                // React re-renders new project
+      },
+    })
+  }
+
+  const handlePrev  = () => navigate((currentIndex - 1 + N) % N, -1)
+  const handleNext  = () => navigate((currentIndex + 1) % N,       1)
+  const goTo = (i: number) => {
+    if (i === currentIndex) return
+    navigate(i, i > currentIndex ? 1 : -1)
+  }
 
   const handleClose = () => {
     gsap.to(overlayRef.current, {
@@ -385,7 +474,7 @@ export default function ProfilePage({ onClose }: ProfilePageProps) {
           <ProfileScene />
         </Canvas>
 
-        {/* Dark gradient for text readability */}
+        {/* Warm gradient for text readability */}
         <div className="pp-gradient" />
 
         {/* Close button */}
@@ -393,10 +482,10 @@ export default function ProfilePage({ onClose }: ProfilePageProps) {
           ×
         </button>
 
-        {/* Scrollable content */}
-        <div className="pp-scroll-area">
+        {/* Full-height flex layout — no scroll */}
+        <div className="pp-stage-wrap">
 
-          {/* Header */}
+          {/* Compact header */}
           <header className="pp-header">
             <h1 className="pp-title" aria-label="My Work">
               {TITLE_CHARS.map((char, i) => (
@@ -416,17 +505,39 @@ export default function ProfilePage({ onClose }: ProfilePageProps) {
             <div ref={underlineRef} className="pp-underline" />
           </header>
 
-          {/* Project grid */}
-          <div className="pp-grid">
-            {PROJECTS.map((project, i) => (
-              <div
-                key={project.id}
-                ref={el => { if (el) cardWrappersRef.current[i] = el }}
-                className="pp-card-wrapper"
-              >
-                <ProjectCard project={project} onVideoClick={setVideoSrc} />
-              </div>
-            ))}
+          {/* Stage: arrows + single animated card */}
+          <div className="pp-stage">
+            <button className="pp-arrow pp-arrow--prev" onClick={handlePrev} aria-label="Previous project">
+              ‹
+            </button>
+
+            {/* Animated container — GSAP manages x + opacity, no CSS transform */}
+            <div ref={stageCardRef} className="pp-stage-card">
+              <ProjectCard
+                project={PROJECTS[currentIndex]}
+                onVideoClick={setVideoSrc}
+                onInfographicClick={setInfographicSrc}
+              />
+            </div>
+
+            <button className="pp-arrow pp-arrow--next" onClick={handleNext} aria-label="Next project">
+              ›
+            </button>
+          </div>
+
+          {/* Counter + dot navigation */}
+          <div className="pp-nav">
+            <span className="pp-counter">{currentIndex + 1} / {N}</span>
+            <div className="pp-dots">
+              {PROJECTS.map((_, i) => (
+                <button
+                  key={i}
+                  className={`pp-dot-btn${i === currentIndex ? ' pp-dot-btn--active' : ''}`}
+                  onClick={() => goTo(i)}
+                  aria-label={`Go to project ${i + 1}`}
+                />
+              ))}
+            </div>
           </div>
 
         </div>
@@ -434,6 +545,9 @@ export default function ProfilePage({ onClose }: ProfilePageProps) {
 
       {videoSrc && (
         <VideoLightbox src={videoSrc} onClose={() => setVideoSrc(null)} />
+      )}
+      {infographicSrc && (
+        <InfographicLightbox src={infographicSrc} onClose={() => setInfographicSrc(null)} />
       )}
     </>
   )
