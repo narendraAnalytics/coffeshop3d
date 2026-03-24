@@ -47,8 +47,8 @@
   border: 1px solid rgba(196,154,60,0.4);
   color: #c49a3c;
   background: rgba(20,12,4,0.55);
-  backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -205,8 +205,8 @@
   align-items: center;
   justify-content: center;
   transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-  backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
 }
 
 .pp-arrow:hover {
@@ -282,8 +282,8 @@
   overflow: hidden;
   background: url('/profile/images/backgroundimage.png') center/cover no-repeat;
   border: 1px solid rgba(196,154,60,0.2);
-  backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   cursor: pointer;
   height: 100%;
   display: flex;
@@ -324,8 +324,8 @@
   padding: 0.38rem 0.9rem;
   border-radius: 4px;
   border: 1px solid rgba(196,154,60,0.45);
-  backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
@@ -388,7 +388,31 @@
   border-radius: 999px;
   border: 1px solid;
   white-space: nowrap;
+  background: rgba(196,154,60,0.18);
+  color: #c49a3c;
+  border-color: #c49a3c;
 }
+
+.pp-stack-badge.pp-badge-react           { background: rgba(97,218,251,0.18);  color: #61DAFB; border-color: #61DAFB; }
+.pp-stack-badge.pp-badge-clerk           { background: rgba(108,71,255,0.18);  color: #a78fff; border-color: #a78fff; }
+.pp-stack-badge.pp-badge-gemini-ai       { background: rgba(52,168,83,0.18);   color: #4eca77; border-color: #4eca77; }
+.pp-stack-badge.pp-badge-imagekit        { background: rgba(255,107,53,0.18);  color: #ff8c66; border-color: #ff8c66; }
+.pp-stack-badge.pp-badge-tailwind-css    { background: rgba(6,182,212,0.18);   color: #22d3ee; border-color: #22d3ee; }
+.pp-stack-badge.pp-badge-prisma          { background: rgba(90,103,216,0.18);  color: #818cf8; border-color: #818cf8; }
+.pp-stack-badge.pp-badge-next-js         { background: rgba(255,255,255,0.12); color: #e2e8f0; border-color: #e2e8f0; }
+.pp-stack-badge.pp-badge-lucide-react    { background: rgba(251,191,36,0.18);  color: #fbbf24; border-color: #fbbf24; }
+.pp-stack-badge.pp-badge-gemini-3-pro    { background: rgba(66,133,244,0.18);  color: #7baaf7; border-color: #7baaf7; }
+.pp-stack-badge.pp-badge-typescript      { background: rgba(49,120,198,0.18);  color: #60a5fa; border-color: #60a5fa; }
+.pp-stack-badge.pp-badge-drizzle         { background: rgba(163,230,53,0.18);  color: #a3e635; border-color: #a3e635; }
+.pp-stack-badge.pp-badge-neon            { background: rgba(20,184,166,0.18);  color: #2dd4bf; border-color: #2dd4bf; }
+.pp-stack-badge.pp-badge-google-gemini-api { background: rgba(66,133,244,0.18); color: #89b4fa; border-color: #89b4fa; }
+.pp-stack-badge.pp-badge-google-gemini   { background: rgba(66,133,244,0.18);  color: #89b4fa; border-color: #89b4fa; }
+.pp-stack-badge.pp-badge-python          { background: rgba(55,118,171,0.18);  color: #4a90d9; border-color: #4a90d9; }
+.pp-stack-badge.pp-badge-langgraph       { background: rgba(30,167,76,0.18);   color: #34c96a; border-color: #34c96a; }
+.pp-stack-badge.pp-badge-fastapi         { background: rgba(0,188,140,0.18);   color: #00bc8c; border-color: #00bc8c; }
+.pp-stack-badge.pp-badge-stack-auth      { background: rgba(239,68,68,0.18);   color: #f87171; border-color: #f87171; }
+.pp-stack-badge.pp-badge-vercel          { background: rgba(255,255,255,0.10); color: #cbd5e1; border-color: #cbd5e1; }
+.pp-stack-badge.pp-badge-motia           { background: rgba(251,191,36,0.18);  color: #fbbf24; border-color: #fbbf24; }
 
 .pp-card-actions {
   display: flex;
@@ -460,8 +484,8 @@
   inset: 0;
   z-index: 110;
   background: rgba(0, 0, 0, 0.86);
-  backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;

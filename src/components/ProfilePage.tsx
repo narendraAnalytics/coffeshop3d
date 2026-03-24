@@ -47,6 +47,7 @@ const PROJECTS: Project[] = [
     infographic: '/profile/infographics/IndiaTradeAnalysis.png',
     video :'/profile/videos/IndiaTradeAnalysisVideo.mp4',
     demo : 'https://tradeanalysis-azure.vercel.app/',
+    stack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Neon', 'Drizzle'],
   },
   {
     id: 'stepwise',
@@ -54,7 +55,7 @@ const PROJECTS: Project[] = [
     infographic: '/profile/infographics/stepwise.png',
     video : 'profile/videos/stepwisevideo.mp4',
     demo : 'https://stepwise-gules.vercel.app/',
-
+    stack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Clerk', 'Gemini AI', 'Neon', 'Drizzle', 'Vercel'],
   },
   {
     id: 'professional-ai-agent',
@@ -62,6 +63,7 @@ const PROJECTS: Project[] = [
     infographic: '/profile/infographics/ProfessionalAIAgent.png',
     video : 'profile/videos/aiagentvideo.mp4',
     demo : 'https://aiagent-ten-nu.vercel.app/',
+    stack: ['React', 'Python', 'LangGraph', 'FastAPI', 'Google Gemini', 'Clerk'],
   },
   
   {
@@ -70,6 +72,7 @@ const PROJECTS: Project[] = [
     infographic: '/profile/infographics/Real Estate Investment.png',
     video : 'profile/videos/EstateVideo.mp4',
     demo : 'https://estate-ai-india.vercel.app/',
+    stack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Gemini AI', 'Stack Auth'],
   },
   {
     id: 'snapcook',
@@ -77,12 +80,14 @@ const PROJECTS: Project[] = [
     infographic: '/profile/infographics/snapcook.png',
     video : 'profile/videos/snapcookvideo.mp4',
     demo : 'https://snapcook-psi.vercel.app/',
+    stack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Gemini AI', 'Drizzle','Neon' ],
   },
   {
     id: 'content-ai',
     title: 'Content AI Generation',
     infographic: '/profile/infographics/contentaigeneration.png',
     demo : 'https://cotentaigeneration.vercel.app/',
+    stack : ['Next.js', 'TypeScript', 'Tailwind CSS', 'Gemini AI', 'Drizzle','Neon','Motia'],
   },
   
   {
@@ -259,23 +264,6 @@ function InfographicLightbox({ src, onClose }: { src: string; onClose: () => voi
   )
 }
 
-// ─── Tech stack color map ──────────────────────────────────────────────────────
-const STACK_COLORS: Record<string, { bg: string; color: string }> = {
-  'React':           { bg: 'rgba(97,218,251,0.18)',  color: '#61DAFB' },
-  'Clerk':           { bg: 'rgba(108,71,255,0.18)',  color: '#a78fff' },
-  'Gemini AI':       { bg: 'rgba(52,168,83,0.18)',   color: '#4eca77' },
-  'ImageKit':        { bg: 'rgba(255,107,53,0.18)',  color: '#ff8c66' },
-  'Tailwind CSS':    { bg: 'rgba(6,182,212,0.18)',   color: '#22d3ee' },
-  'Prisma':          { bg: 'rgba(90,103,216,0.18)',  color: '#818cf8' },
-  'Next.js':         { bg: 'rgba(255,255,255,0.12)', color: '#e2e8f0' },
-  'Lucide React':    { bg: 'rgba(251,191,36,0.18)',  color: '#fbbf24' },
-  'Gemini 3 Pro':    { bg: 'rgba(66,133,244,0.18)',  color: '#7baaf7' },
-  'TypeScript':      { bg: 'rgba(49,120,198,0.18)',  color: '#60a5fa' },
-  'Drizzle':         { bg: 'rgba(163,230,53,0.18)',  color: '#a3e635' },
-  'Neon':            { bg: 'rgba(20,184,166,0.18)',  color: '#2dd4bf' },
-  'Google Gemini API': { bg: 'rgba(66,133,244,0.18)',  color: '#89b4fa' },
-  'Vercel':            { bg: 'rgba(255,255,255,0.10)', color: '#cbd5e1' },
-}
 
 // ─── Project Card ─────────────────────────────────────────────────────────────
 
@@ -347,13 +335,9 @@ function ProjectCard({
         {project.stack && project.stack.length > 0 && (
           <div className="pp-card-stack">
             {project.stack.map((tech) => {
-              const c = STACK_COLORS[tech] ?? { bg: 'rgba(196,154,60,0.18)', color: '#c49a3c' }
+              const cls = 'pp-badge-' + tech.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
               return (
-                <span
-                  key={tech}
-                  className="pp-stack-badge"
-                  style={{ background: c.bg, color: c.color, borderColor: c.color }}
-                >
+                <span key={tech} className={`pp-stack-badge ${cls}`}>
                   {tech}
                 </span>
               )
