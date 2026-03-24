@@ -231,7 +231,7 @@
   position: relative;
   border-radius: 12px;
   overflow: hidden;
-  background: rgba(50, 30, 10, 0.68);
+  background: url('/profile/images/backgroundimage.png') center/cover no-repeat;
   border: 1px solid rgba(196,154,60,0.2);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
