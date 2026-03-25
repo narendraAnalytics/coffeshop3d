@@ -386,6 +386,7 @@ export default function ProfilePage({ onClose }: ProfilePageProps) {
   const subtitleRef    = useRef<HTMLParagraphElement>(null)
   const underlineRef   = useRef<HTMLDivElement>(null)
   const stageCardRef   = useRef<HTMLDivElement>(null)
+  const resumeBtnRef   = useRef<HTMLAnchorElement>(null)
   const isAnimatingRef = useRef(false)
   const directionRef   = useRef<1 | -1>(1)
 
@@ -400,11 +401,21 @@ export default function ProfilePage({ onClose }: ProfilePageProps) {
 
     const tl = gsap.timeline()
 
-    // 1. Overlay sweeps in from the right via clip-path
+    // 1. Overlay slams in from the right — fast hit, rebound, then settle
     tl.to(overlayRef.current, {
       clipPath: 'inset(0 0% 0 0)',
-      duration: 0.75,
-      ease: 'power3.out',
+      duration: 0.42,
+      ease: 'power4.out',
+    })
+    .to(overlayRef.current, {
+      clipPath: 'inset(0 7% 0 0)',
+      duration: 0.14,
+      ease: 'power2.in',
+    })
+    .to(overlayRef.current, {
+      clipPath: 'inset(0 0% 0 0)',
+      duration: 0.22,
+      ease: 'power2.out',
     })
 
     // 2. Title letters stagger up
@@ -431,7 +442,15 @@ export default function ProfilePage({ onClose }: ProfilePageProps) {
       '-=0.2'
     )
 
-    // 5. Stage card slides in from right on first open
+    // 5. Resume button fades in after underline
+    .fromTo(
+      resumeBtnRef.current,
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' },
+      '-=0.1'
+    )
+
+    // 6. Stage card slides in from right on first open
     .fromTo(
       stageCardRef.current,
       { x: 280, opacity: 0 },
@@ -556,17 +575,31 @@ export default function ProfilePage({ onClose }: ProfilePageProps) {
 
           {/* Compact header */}
           <header className="pp-header">
-            <h1 className="pp-title" aria-label="My Work">
-              {TITLE_CHARS.map((char, i) => (
-                <span
-                  key={i}
-                  ref={el => { if (el) lettersRef.current[i] = el }}
-                  className={`pp-title-char${char === ' ' ? ' pp-title-space' : ''}`}
+            <div className="pp-title-row">
+              <h1 className="pp-title" aria-label="My Work">
+                {TITLE_CHARS.map((char, i) => (
+                  <span
+                    key={i}
+                    ref={el => { if (el) lettersRef.current[i] = el }}
+                    className={`pp-title-char${char === ' ' ? ' pp-title-space' : ''}`}
+                  >
+                    {char}
+                  </span>
+                ))}
+              </h1>
+              {/* Resume button — inline with title */}
+              <div className="pp-resume-row">
+                <a
+                  ref={resumeBtnRef}
+                  href="/profile/saasresume.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="pp-btn-resume"
                 >
-                  {char}
-                </span>
-              ))}
-            </h1>
+                  Resume ↓
+                </a>
+              </div>
+            </div>
             <p ref={subtitleRef} className="pp-subtitle">
               Design <span className="pp-dot">·</span> Product{' '}
               <span className="pp-dot">·</span> Strategy
