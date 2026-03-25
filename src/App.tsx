@@ -7,6 +7,7 @@ import About from './components/About'
 import Contact from './components/Contact'
 import IntroScreen from './components/IntroScreen'
 import ProfilePage from './components/ProfilePage'
+import ChatBot from './components/ChatBot'
 
 function App() {
   const [showIntro, setShowIntro] = useState(
@@ -29,6 +30,7 @@ function App() {
       {showProfile && (
         <ProfilePage onClose={() => setShowProfile(false)} />
       )}
+      <ChatBot />
     </>
   )
 }
