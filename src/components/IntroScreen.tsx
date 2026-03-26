@@ -38,6 +38,7 @@ export default function IntroScreen({ onComplete }: IntroScreenProps) {
         className="intro-video"
         src="/videos/openingmedia.mp4"
         autoPlay
+        muted
         loop
         playsInline
         preload="auto"
