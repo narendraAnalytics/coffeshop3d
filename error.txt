@@ -1,0 +1,39 @@
+08:37:43.078 Running build in Washington, D.C., USA (East) – iad1
+08:37:43.078 Build machine configuration: 2 cores, 8 GB
+08:37:43.198 Cloning github.com/narendraAnalytics/coffeshop3d (Branch: main, Commit: 364674d)
+08:37:43.199 Previous build caches not available.
+08:38:02.690 Cloning completed: 19.492s
+08:38:03.230 Running "vercel build"
+08:38:03.985 Vercel CLI 50.35.0
+08:38:04.518 Installing dependencies...
+08:38:07.506 npm error code ERESOLVE
+08:38:07.507 npm error ERESOLVE could not resolve
+08:38:07.508 npm error
+08:38:07.509 npm error While resolving: @tailwindcss/vite@4.2.1
+08:38:07.510 npm error Found: vite@8.0.0
+08:38:07.510 npm error node_modules/vite
+08:38:07.510 npm error   dev vite@"^8.0.0" from the root project
+08:38:07.510 npm error   peer vite@"^8.0.0" from @vitejs/plugin-react@6.0.1
+08:38:07.511 npm error   node_modules/@vitejs/plugin-react
+08:38:07.511 npm error     dev @vitejs/plugin-react@"^6.0.0" from the root project
+08:38:07.511 npm error
+08:38:07.512 npm error Could not resolve dependency:
+08:38:07.512 npm error peer vite@"^5.2.0 || ^6 || ^7" from @tailwindcss/vite@4.2.1
+08:38:07.512 npm error node_modules/@tailwindcss/vite
+08:38:07.512 npm error   @tailwindcss/vite@"^4.2.1" from the root project
+08:38:07.513 npm error
+08:38:07.514 npm error Conflicting peer dependency: vite@7.3.1
+08:38:07.514 npm error node_modules/vite
+08:38:07.514 npm error   peer vite@"^5.2.0 || ^6 || ^7" from @tailwindcss/vite@4.2.1
+08:38:07.514 npm error   node_modules/@tailwindcss/vite
+08:38:07.514 npm error     @tailwindcss/vite@"^4.2.1" from the root project
+08:38:07.515 npm error
+08:38:07.515 npm error Fix the upstream dependency conflict, or retry
+08:38:07.515 npm error this command with --force or --legacy-peer-deps
+08:38:07.515 npm error to accept an incorrect (and potentially broken) dependency resolution.
+08:38:07.515 npm error
+08:38:07.515 npm error
+08:38:07.516 npm error For a full report see:
+08:38:07.516 npm error /vercel/.npm/_logs/2026-03-26T03_08_04_755Z-eresolve-report.txt
+08:38:07.516 npm error A complete log of this run can be found in: /vercel/.npm/_logs/2026-03-26T03_08_04_755Z-debug-0.log
+08:38:07.553 Error: Command "npm install" exited with 1
